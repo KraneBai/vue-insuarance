@@ -1,0 +1,90 @@
+<template>
+  <div class="person-header">
+    <header class="border">
+      <span>
+        <img src="../../../assets/images/avatar.png" @click="centerShow">
+      </span>
+      <dl>
+        <dt>{{overviews.name}}</dt>
+        <dd>{{overviews.company}}</dd>
+      </dl>
+      <i @click="messageList"></i>
+    </header>
+    <nav class="border">
+      <dl>
+        <dt>{{overviews.date}} | {{overviews.industry}}</dt>
+        <dd>{{overviews.province}}->{{overviews.city}}</dd>
+      </dl>
+      <i @click="filterShow">筛选</i>
+    </nav>
+  </div>
+</template>
+<script>
+export default {
+  name: 'PersonHeader',
+  props: {
+    overviews: Object
+  },
+  methods: {
+    // 消息列表
+    messageList () {
+      this.$router.push({name: 'PersonList'})
+    },
+    // 传递给父级, 显示左边栏
+    centerShow () {
+      this.$emit('centerControl', true)
+    },
+    filterShow () {
+      this.$emit('filterControl', true)
+    }
+  }
+}
+</script>
+<style lang="stylus" scoped>
+.person-header
+  header
+    position relative
+    display flex
+    padding 0 .3rem
+    align-items center
+    section-border()
+    height 1.7rem
+    font-size .28rem
+    line-height .56rem
+    span
+      position relative
+      z-index 99
+      margin-right .26rem
+      width .94rem
+      img
+        width 100%
+    dl
+      flex 1
+      dd
+        line-height .38rem
+        font-size .22rem
+        color $commonTxtColor
+    i
+      position absolute
+      right .3rem
+      top .32rem
+      width .33rem
+      height .33rem
+      bg-img(100%, 100%, left, top)
+      background-image url(../../../assets/images/news.png)
+  nav
+    margin .23rem 0
+    display flex
+    padding 0 .2rem
+    align-items center
+    height 1.2rem
+    line-height .5rem
+    section-border()
+    dl
+      flex 1
+    i
+      z-index 99
+      padding-left .35rem
+      bg-img(.23rem, .2rem, left, center)
+      background-image url(../../../assets/images/filter.png)
+</style>
