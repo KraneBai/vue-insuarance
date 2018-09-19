@@ -17,7 +17,7 @@
         class="border"
         v-for="(item, key) of cate.catesList"
         :key="key"
-        :style="{fontSize: item.name.length > 6 ? '.2rem' : '.26rem'}"
+        :style="{fontSize: item.name.length > 6 ? '.16rem' : '.22rem'}"
         @click="radioSelect(key, item, cate.type)"
         :class="{active: curItem === key}"
       >{{item.name}}</span>
@@ -145,7 +145,7 @@ export default {
 .filter-opts-item
   padding .3rem 0
   &::before
-    border-color $borderBottomColor
+    border-color #3043a9
   h3
     padding 0 .2rem
     position relative

@@ -78,7 +78,7 @@ export default {
           observer: true, // 启动动态检查器(OB/观众/观看者)，当改变swiper的样式（例如隐藏/显示）或者修改swiper的子元素时，自动初始化swiper
           noSwipingSelector: '.chart-box', // 避免局部滑动的时候 滑动slider
           pagination: {
-            el: '.swiper-pagination',
+            el: '.swiper-pagination'
           }
         })
       })
@@ -105,11 +105,13 @@ export default {
   .swiper-container-vertical > .swiper-pagination-bullets
     left .07rem
   .swiper-pagination-bullet
+    width 6px
+    height 6px
     display block
     margin-top .07rem
     background #3a9ec6
   .swiper-pagination-bullet-active
-    height 16px
+    height 10px
     border-radius 10px
     background #00c3ff
 .person-overview

@@ -18,7 +18,7 @@
         <span>文化程度：高中</span>
         <span>性别：男</span>
       </div>
-      <highcharts :options="pieOpt"></highcharts>
+      <highcharts class="pie-chart" :options="pieOpt"></highcharts>
     </div>
     <footer class="border">
       <h2 class="border-bottom">{{opts.subtitle}}</h2>
@@ -48,17 +48,19 @@ import BScroll from 'better-scroll'
 export default {
   name: 'FilterChart',
   props: {
-    opts: Object
+    opts: Object,
+    series: Object
   },
   data () {
     return {
       pieOpt: {
         chart: {
           type: 'pie',
-          reflow: false,
+          spacing: [0, 0, 0, 0],
           backgroundColor: '#192749',
-          height: 250 // 图表高度
+          margin: 0
         },
+        colors: ['#ffc600', '#00c3ff', '#ff8400', '#6edd42', '#284dea', '#ed5a5a', '#facd89', '#009acc'],
         credits: {
           enabled: false // 版权
         },
@@ -69,45 +71,49 @@ export default {
           enabled: false
         },
         legend: {
-          symbolHeight: 6,
-          symbolWidth: 16,
-          symbolRadius: 0,
           squareSymbol: false,
+          symbolHeight: 2,
+          symbolWidth: 6,
           verticalAlign: 'bottom',
-          itemDistance: 35,
+          margin: 0,
+          padding: 20,
+          itemWidth: 140,
+          width: 280,
           labelFormatter () {
-            return '<div style="font-weight: normal; font-size: .2rem; color:' + this.color + '">' + this.name + '(' + this.y + '%)</div>'
+            return '<div style="font-weight: normal; font-size: .22rem; color:' + this.color + '">' + this.name + '(' + this.y + '%)</div>'
           }
         },
         plotOptions: {
           series: {
-            center: ['50%', '50%'], // 居中
+            enableMouseTracking: false,
+            size: '40%',
+            center: ['50%', '30%'], // 居中
             dataLabels: {
               enabled: true,
               softConnector: false,
-              distance: 30,
+              distance: 20,
               style: {
-                fontSize: '10',
+                fontSize: 12,
+                fontWeight: 'normal',
                 textOutline: 'none' // 去除阴影
               },
-              format: '{y}%',
+              formatter () {
+                return '<div style="color:' + this.color + '">' + this.y + '%</div>'
+              },
               connectorPadding: 0,
               shadow: false,
               verticalAlign: 'top'
-            }
+            },
+            states: {
+              hover: {
+                enabled: false // 划过或点击效果
+              }
+            },
+            borderWidth: 0, // 饼图边框
+            showInLegend: true // 是否显示图例
           }
         },
-        series: [{
-          size: '60%',
-          borderWidth: 0,
-          showInLegend: true, // 是否显示图例
-          states: {
-            hover: {
-              enabled: false // 划过或点击效果
-            }
-          },
-          data: []
-        }]
+        series: []
       }
     }
   },
@@ -134,7 +140,10 @@ export default {
   },
   mounted () {
     this._initScroll()
-    this.pieOpt.series[0].data = this.opts.data
+    if (this.opts.cates === 'sex') {
+      this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {itemWidth: undefined, width: undefined})
+    }
+    this.pieOpt.series.push(this.opts.series)
   }
 }
 </script>
@@ -189,9 +198,17 @@ export default {
         height 0.6rem
         background $txtColor
   .center
-    padding 0 0.2rem
+    padding .78rem 0.2rem .15rem
     box-sizing border-box
     height 100%
+    h2
+      position absolute
+      top 0
+      left .2rem
+      right .2rem
+    .pie-chart
+      width 100%
+      height 100%
     .industry-tab
       padding-top .3rem
       display flex

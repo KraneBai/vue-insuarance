@@ -3,7 +3,7 @@
     <!-- 离司/人员概览/入司 -->
     <div class="chart-inner border" ref="chartbox">
       <div class="chart-inner-top">
-        <h2 class="border-bottom"><span>{{type.category}}</span><i @click="toFilter">详细</i></h2>
+        <h2 class="border-bottom"><span>{{type.category}}</span><i @click="toFilterChartDetail">详细</i></h2>
         <section class="chart-top">
           <dl>
             <dt>{{type.top.left}}</dt>
@@ -15,7 +15,7 @@
           </dl>
           <highcharts class="pie" ref="pieChart" :options="pieOpt"></highcharts>
         </section>
-        <h2 class="border-bottom">{{type.subcategory}}</h2>
+        <h3 class="border-bottom">{{type.subcategory}}</h3>
       </div>
       <div class="chart-box-wrapper">
         <div class="chart-box">
@@ -167,15 +167,9 @@ export default {
           enabled: false
         },
         plotOptions: {
-          pie: {
-            size: '65%',
-            dataLabels: {
-              connectorColor: '#00c3ff',
-              color: '#00c3ff',
-              distance: 5
-            }
-          },
           series: {
+            size: '75%',
+            center: ['20%', '30%'],
             states: {
               hover: {
                 enabled: false // 划过或点击效果
@@ -185,6 +179,9 @@ export default {
             borderWidth: 0, // 图的边框
             dataLabels: {
               format: '{y}%',
+              color: '#00c3ff',
+              distance: 5,
+              connectorColor: '#00c3ff',
               connectorPadding: 0, // 线和label的距离
               style: {
                 fontSize: '8',
@@ -198,7 +195,7 @@ export default {
     }
   },
   methods: {
-    toFilter () {
+    toFilterChartDetail () {
       this.$router.push({name: 'PersonDetailOpts'})
     },
     _initScroll () {
@@ -225,6 +222,8 @@ export default {
       // pie图  动态改变obj的值
       this.pieOpt = Object.assign({}, this.commonChart, this.pieOpt, this.type.pieData)
       this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {layout: 'vertical'})
+      this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {x: 5, y: -5})
+      this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {symbolWidth: 0})
       // line图
       this.lineOpt = Object.assign({}, this.commonChart, this.lineOpt, this.type.lineData)
     }
@@ -258,7 +257,7 @@ export default {
     &::before
       border-color $borderBottomColor
   .chart-inner
-    padding 3.52rem .2rem .2rem
+    padding 2.82rem .2rem .2rem
     position absolute
     box-sizing border-box
     top 0
@@ -282,10 +281,15 @@ export default {
           text-align right
           bg-img(.12rem, .22rem, right .1rem, center)
           background-image url(../../../assets/images/arrow_right.png)
+      h3
+        display flex
+        height .58rem
+        line-height .58rem
+        font-size .26rem
   section
     display flex
     align-items center
-    height 1.96rem
+    height 1.46rem
     dl
       text-align center
       dt
@@ -303,8 +307,7 @@ export default {
       flex 1
       overflow hidden
       position relative
-      top 20%
-      height 120%
+      height 100%
   .chart-box-wrapper
     overflow scroll
     width 100%

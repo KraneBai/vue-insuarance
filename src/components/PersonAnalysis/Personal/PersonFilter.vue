@@ -1,8 +1,10 @@
 <template>
-  <div>
-    <template v-for="cate of overviews.filter">
-      <filter-opts :cate="cate" :key="cate.type" @getType="getFilterInfo"></filter-opts>
-    </template>
+  <div class="filter-content">
+    <div class="filter-inner">
+      <template v-for="cate of overviews.filter">
+        <filter-opts :cate="cate" :key="cate.type" @getType="getFilterInfo"></filter-opts>
+      </template>
+    </div>
     <div class="btns">
       <button class="reset-btn">重置</button>
       <button class="search-btn">确定</button>
@@ -30,9 +32,21 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.filter-content
+  padding-bottom 1.4rem
+  height 100%
+  .filter-inner
+    height 100%
+    overflow-y auto
+    -webkit-overflow-scrolling touch
 .btns
+  position fixed
+  width 75%
+  right 0
+  bottom 0
   padding .3rem .2rem
   display flex
+  z-index 100000
   button
     flex 1
     outline none
