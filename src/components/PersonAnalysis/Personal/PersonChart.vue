@@ -2,21 +2,25 @@
   <div class="personnel">
     <!-- 离司/人员概览/入司 -->
     <div class="chart-inner border" ref="chartbox">
-      <h2 class="border-bottom"><span>{{type.category}}</span><i @click="toFilter">详细</i></h2>
-      <section class="chart-top">
-        <dl>
-          <dt>{{type.top.left}}</dt>
-          <dd>{{type.top.leftNum}}</dd>
-        </dl>
-        <dl class="orange">
-          <dt>{{type.top.right}}</dt>
-          <dd>{{type.top.rightPer}}</dd>
-        </dl>
+      <div class="chart-inner-top">
+        <h2 class="border-bottom"><span>{{type.category}}</span><i @click="toFilter">详细</i></h2>
+        <section class="chart-top">
+          <dl>
+            <dt>{{type.top.left}}</dt>
+            <dd>{{type.top.leftNum}}</dd>
+          </dl>
+          <dl class="orange">
+            <dt>{{type.top.right}}</dt>
+            <dd>{{type.top.rightPer}}</dd>
+          </dl>
           <highcharts class="pie" ref="pieChart" :options="pieOpt"></highcharts>
-      </section>
-      <h2 class="border-bottom">{{type.subcategory}}</h2>
-      <div class="chart-box">
-        <highcharts :options="lineOpt"></highcharts>
+        </section>
+        <h2 class="border-bottom">{{type.subcategory}}</h2>
+      </div>
+      <div class="chart-box-wrapper">
+        <div class="chart-box">
+          <highcharts :options="lineOpt"></highcharts>
+        </div>
       </div>
     </div>
     <footer class="border" ref="wrapper" v-if="hasFooter">
@@ -39,7 +43,7 @@
 <script>
 import BScroll from 'better-scroll'
 export default {
-  name: 'PersonnelChart',
+  name: 'PersonChart',
   props: {
     type: Object
   },
@@ -50,15 +54,8 @@ export default {
   },
   data () {
     return {
-      common: {
-        chart: {
-          spacing: [0, 0, 0, 0],
-          backgroundColor: '#192749'
-        },
+      commonChart: {
         colors: ['#ffc600', '#00c3ff'],
-        credits: {
-          enabled: false
-        },
         title: {
           text: null
         },
@@ -73,7 +70,7 @@ export default {
           align: 'right',
           verticalAlign: 'top',
           labelFormatter () {
-            return '<div style="font-weight: normal; color:' + this.color + '">' + this.name + '</div>'
+            return '<div style="font-weight: normal; font-size: .18rem; color:' + this.color + '">' + this.name + '</div>'
           }
         }
       },
@@ -81,30 +78,11 @@ export default {
         chart: {
           spacing: [0, 0, 0, 0],
           backgroundColor: '#192749',
-          width: 1000,
-          height: 200,
-          marginTop: 45
+          marginTop: 25,
+          marginRight: 15
         },
-        colors: ['#ffc600', '#00c3ff'],
         credits: {
           enabled: false
-        },
-        title: {
-          text: null
-        },
-        tooltip: {
-          enabled: false
-        },
-        legend: {
-          squareSymbol: false,
-          symbolHeight: 2,
-          symbolWidth: 12,
-          floating: true,
-          align: 'right',
-          verticalAlign: 'top',
-          labelFormatter () {
-            return '<div style="font-weight: normal; color:' + this.color + '">' + this.name + '</div>'
-          }
         },
         plotOptions: {
           line: {
@@ -112,86 +90,85 @@ export default {
               symbol: 'circle'
             },
             enableMouseTracking: false,
-            lineWidth: 1
+            lineWidth: 1,
+            dataLabels: {
+              enabled: true,
+              style: {
+                color: this.color,
+                fontWeight: 'normal',
+                fontSize: '10',
+                textOutline: 'none' // 文字去除阴影
+              }
+            }
+          },
+          series: {
+            pointStart: Date.UTC(2018, 0, 1), // 2018-01-01开始
+            pointIntervalUnit: 'month'
           }
         },
         xAxis: {
-          categories: ['2018-01', '2018-02', '2018-03', '2018-04', '2018-05', '2018-06', '2018-07', '2018-08', '2018-09', '2018-10', '2018-11', '2018-12'],
+          type: 'datetime',
+          dateTimeLabelFormats: {
+            month: '%Y-%m'
+          },
+          // categories: ['2018-1', '2018-2', '2018-3', '2018-4', '2018-5', '2018-6', '2018-7', '2018-8', '2018-9', '2018-10', '2018-11', '2018-12', '2019-1', '2019-2', '2019-3', '2019-4', '2019-5', '2019-6', '2019-7', '2019-8', '2019-9', '2019-10', '2019-11', '2019-12'],
           labels: {
             style: {
-              color: '#fff'
+              color: '#fff',
+              fontSize: '8px'
             }
           },
           lineColor: '#2c3459',
           title: {
             text: '年月',
             style: {
+              fontSize: '9',
               color: '#fff'
             }
           },
+          // tickPixelInterval: 10,
           tickLength: 0 // 刻度线长度
         },
         yAxis: {
           labels: {
             style: {
-              color: '#fff'
+              fontSize: '8',
+              color: '#fff' // y轴显示颜色
             }
           },
-          lineColor: '#2c3459',
+          min: 0,
+          endOnTick: false, // 最顶部多出来线条
+          lineColor: '#2c3459', // y轴颜色
           lineWidth: 1, // 默认0 x轴默认1
           gridLineColor: '#2c3459', // 数据线颜色
           title: {
             text: '人员数(人)',
             style: {
+              fontSize: '9',
               color: '#fff'
             },
             align: 'high',
             offset: -10,
             rotation: 0,
-            y: -20,
+            y: -10,
             x: 10
           },
           tickInterval: 100 // 数据数间隔
-        },
-        series: [{
-          name: '行业',
-          data: [100, 200, 300, 400, 500, 600, 700]
-        }, {
-          name: '公司',
-          data: [500, 100, 300, 250, 700, 200, 600]
-        }]
+          // tickPixelInterval: 10,
+        }
       },
       pieOpt: {
         chart: {
-          backgroundColor: '#192749',
           spacing: [0, 0, 0, 0],
+          backgroundColor: '#192749',
           margin: 0
         },
-        colors: ['#ffc600', '#00c3ff'],
         credits: {
           enabled: false
         },
-        title: {
-          text: null
-        },
-        tooltip: {
-          enabled: false
-        },
-        legend: {
-          squareSymbol: false,
-          symbolHeight: 2,
-          symbolWidth: 12,
-          float: true,
-          align: 'right',
-          verticalAlign: 'top',
-          labelFormatter () {
-            return '<div style="font-weight: normal; font-size: .16rem; color:' + this.color + '">' + this.name + '</div>'
-          },
-          layout: 'vertical'
-        },
         plotOptions: {
           pie: {
-            size: '80%',
+            size: '65%',
             dataLabels: {
               connectorColor: '#00c3ff',
               color: '#00c3ff',
@@ -210,30 +187,13 @@ export default {
               format: '{y}%',
               connectorPadding: 0, // 线和label的距离
               style: {
-                fontSize: '10',
+                fontSize: '8',
                 textOutline: 'none' // 文字去除阴影
               },
               softConnector: false // 线条硬朗？
             }
           }
-        },
-        series: [{
-          center: ['20%', '50%'],
-          type: 'pie',
-          data: [
-            {
-              name: '本公司',
-              y: 90.44
-            },
-            {
-              name: '其他公司',
-              y: 9.56,
-              dataLabels: {
-                enabled: false
-              }
-            }
-          ]
-        }]
+        }
       }
     }
   },
@@ -260,10 +220,18 @@ export default {
           }
         }
       })
+    },
+    _initChart () {
+      // pie图  动态改变obj的值
+      this.pieOpt = Object.assign({}, this.commonChart, this.pieOpt, this.type.pieData)
+      this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {layout: 'vertical'})
+      // line图
+      this.lineOpt = Object.assign({}, this.commonChart, this.lineOpt, this.type.lineData)
     }
   },
   mounted () {
     this._initScroll()
+    this._initChart()
     // 新增人员时没有底部 动态调整位置
     if (this.type.type === 'add') {
       this.$refs.chartbox.style.bottom = '.3rem'
@@ -290,25 +258,30 @@ export default {
     &::before
       border-color $borderBottomColor
   .chart-inner
+    padding 3.52rem .2rem .2rem
     position absolute
     box-sizing border-box
-    padding 0 .2rem
     top 0
     bottom 1.9rem
     left 0
     right 0
-    h2
-      display flex
-      height .78rem
-      line-height .78rem
-      font-size .26rem
-      i
-        flex 1
-        padding-right .35rem
-        font-size .22rem
-        text-align right
-        bg-img(.12rem, .22rem, right .1rem, center)
-        background-image url(../../../assets/images/arrow_right.png)
+    .chart-inner-top
+      position absolute
+      top 0
+      left .2rem
+      right .2rem
+      h2
+        display flex
+        height .78rem
+        line-height .78rem
+        font-size .26rem
+        i
+          flex 1
+          padding-right .35rem
+          font-size .22rem
+          text-align right
+          bg-img(.12rem, .22rem, right .1rem, center)
+          background-image url(../../../assets/images/arrow_right.png)
   section
     display flex
     align-items center
@@ -328,42 +301,47 @@ export default {
         color $orangeBottomColor
     .pie
       flex 1
-      height 100%
       overflow hidden
-  .chart-box
-    overflow auto
+      position relative
+      top 20%
+      height 120%
+  .chart-box-wrapper
+    overflow scroll
     width 100%
-    height 3rem
-    .legend
-      margin-top .2rem
-      display flex
-      color $commonTxtColor
-      font-size .16rem
-      p
-        &.legend-right
-          flex: 1
-          text-align right
-          span
-            position relative
-            padding-top .2rem
-            display inline-block
-            height .35rem
-            &::before
-              content ''
-              position absolute
-              top 0
-              left 0
-              width .16rem
-              height .03rem
-          .first
-              margin-right .1rem
-              color #ffff43
+    height 100%
+    .chart-box
+      width 30rem
+      height 100%
+      .legend
+        margin-top .2rem
+        display flex
+        color $commonTxtColor
+        font-size .16rem
+        p
+          &.legend-right
+            flex: 1
+            text-align right
+            span
+              position relative
+              padding-top .2rem
+              display inline-block
+              height .35rem
               &::before
-                background #ffff43
-          .last
-              color #00ccff
-              &::before
-                background #00ccff
+                content ''
+                position absolute
+                top 0
+                left 0
+                width .16rem
+                height .03rem
+            .first
+                margin-right .1rem
+                color #ffff43
+                &::before
+                  background #ffff43
+            .last
+                color #00ccff
+                &::before
+                  background #00ccff
   footer
     position absolute
     box-sizing border-box
