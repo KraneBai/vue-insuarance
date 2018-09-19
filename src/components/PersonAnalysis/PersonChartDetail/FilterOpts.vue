@@ -27,7 +27,7 @@
         class="border"
         v-for="(item, key) of cate.catesList"
         :key="key"
-        :style="{fontSize: item.name.length > 6 ? '.2rem' : '.28rem'}"
+        :style="{fontSize: item.name.length > 6 ? '.16rem' : '.22rem'}"
         @click="multiSelect(key, item, cate.type)"
         ref="multiItem"
       >{{item.name}}</span>

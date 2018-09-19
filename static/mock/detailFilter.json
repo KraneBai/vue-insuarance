@@ -124,8 +124,9 @@
           "idx": 2
         }
       ]
-    },
-    {
+    }
+  ],
+  "rate": {
       "filter": "multi",
       "type": "retain",
       "category": "留存率",
@@ -148,5 +149,4 @@
         }
       ]
     }
-  ]
 }

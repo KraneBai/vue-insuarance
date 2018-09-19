@@ -3,7 +3,7 @@
     <!-- 离司/人员概览/入司 -->
     <div class="chart-inner border" ref="chartbox">
       <div class="chart-inner-top">
-        <h2 class="border-bottom"><span>{{type.category}}</span><i @click="toFilterChartDetail">详细</i></h2>
+        <h2 class="border-bottom"><span>{{type.category}}</span><i @click="toFilterChartDetail(type.type)">详细</i></h2>
         <section class="chart-top">
           <dl>
             <dt>{{type.top.left}}</dt>

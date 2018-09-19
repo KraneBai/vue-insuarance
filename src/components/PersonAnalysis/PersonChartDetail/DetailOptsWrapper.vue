@@ -4,6 +4,7 @@
       <template v-for="cate of filterOpts">
         <filter-opts :cate="cate" :key="cate.type" @getType="getFilterInfo"></filter-opts>
       </template>
+      <filter-opts :cate="rate" @getType="getFilterInfo"></filter-opts>
     </div>
     <div class="btns">
       <button class="reset-btn">重置</button>
@@ -29,7 +30,8 @@ export default {
         political: '不限',
         retain: ['13个月留存率']
       },
-      filterOpts: []
+      filterOpts: [],
+      rate: {}
     }
   },
   methods: {
@@ -50,6 +52,7 @@ export default {
           let data = res.data
           if (data.status) {
             this.filterOpts = data.filterOpts
+            this.rate = data.rate
           }
         })
         .catch(() => {
