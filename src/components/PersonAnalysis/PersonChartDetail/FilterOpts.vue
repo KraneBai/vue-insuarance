@@ -2,7 +2,7 @@
   <section class="filter-opts-item border-bottom">
     <h3>
       {{cate.category}}
-      <span v-if="cate.type === 'time'">2017/12-2018/12</span>
+      <span v-if="cate.type === 'time'">{{startyear}}/{{startmonth}}-{{endyear}}/{{endmonth}}</span>
       <i v-if="(cate.type === 'company' || cate.type === 'area' || cate.type === 'time')"></i>
     </h3>
     <div class="filter-inp" v-if="cate.type === 'age'">
@@ -53,36 +53,36 @@ export default {
   },
   data () {
     return {
+      startPicker: '',
+      endPicker: '',
+      startyear: '',
+      startmonth: '',
+      endyear: new Date().getFullYear(),
+      endmonth: new Date().getMonth() + 1,
       slotsStart: [
         {
-          defaultIndex: 2, // 默认第几个
+          defaultIndex: 1, // 默认第几个
           flex: 1,
-          values: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
-          className: 'slot1',
+          values: [2017, 2018],
           textAlign: 'right'
         },
         {
           defaultIndex: 11,
           flex: 1,
-          values: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
-          className: 'slot2',
-          textAlign: 'left'
+          values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         }
       ],
       slotsEnd: [
         {
-          defaultIndex: 3,
+          defaultIndex: 1,
           flex: 1,
-          values: ['2015', '2016', '2017', '2018', '2019', '2020', '2021', '2022'],
-          className: 'slot1',
+          values: [2017, 2018],
           textAlign: 'right'
         },
         {
-          defaultIndex: 11,
+          defaultIndex: new Date().getMonth() + 1,
           flex: 1,
-          values: ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
-          className: 'slot2',
-          textAlign: 'left'
+          values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         }
       ],
       minage: '',
@@ -95,6 +95,20 @@ export default {
     inpage () {
       return this.minage + '-' + this.maxage
     }
+    // startyear () {
+    //   if (this.endmonth - 6 >= 1) {
+    //     return this.endyear
+    //   } else {
+    //     return this.endyear - 1
+    //   }
+    // },
+    // startmonth () {
+    //   if (this.endmonth - 6 >= 1) {
+    //     return this.endmonth - 6
+    //   } else {
+    //     return 12 - Math.abs(this.endmonth - 6)
+    //   }
+    // }
   },
   watch: {
     // 输入的年龄有值, tab消失
@@ -118,6 +132,29 @@ export default {
           this.curItem = 0
         }
       }
+    },
+    curItem (val) {
+      let minus = 0
+      if (val === 1) {
+        minus = 3 // 近3个月
+      }
+      if (val === 2) {
+        minus = 6 // 近6个月
+      }
+      let today = new Date()
+      this.endmonth = today.getMonth() + 1
+      this.endyear = today.getFullYear()
+      if (this.endmonth - minus > 1) {
+        this.startmonth = this.endmonth - minus
+        this.startyear = this.endyear
+      } else {
+        this.startmonth = 12 - Math.abs(this.endmonth - minus)
+        this.startyear = this.endyear - 1
+      }
+      this.startPicker.setSlotValue(0, this.startyear)
+      this.startPicker.setSlotValue(1, this.startmonth)
+      this.endPicker.setSlotValue(0, this.endyear)
+      this.endPicker.setSlotValue(1, this.endmonth)
     }
   },
   methods: {
@@ -132,6 +169,9 @@ export default {
       if (type === 'age') { // 输入的年龄为空, 置空操作在前
         this.minage = ''
         this.maxage = ''
+      }
+      if (item === '本月') {
+        this.endyear = new Date().getFullYear()
       }
       this.curItem = key
       // 传给上级当前选中的值, 更新搜索条件
@@ -156,18 +196,31 @@ export default {
       this.$emit('getType', {type, item: this.itemArr})
     },
     startChange (picker, values) {
-      console.log(values)
+      this.startPicker = picker
+      // this.startPicker.setSlotValue(0, this.startyear)
+      // this.startPicker.setSlotValue(1, this.startmonth)
+      // this.startyear = values[0]
+      // this.startmonth = values[1]
+      // console.log(this.startPicker.getSlotValues(1))
+      // console.log(this.startPicker.setSlotValues(0, ['2003', '2004', '2005', '2006', '2007', '2008',]))
     },
     endChange (picker, values) {
-      console.log(values)
+      // this.endPicker = picker
+      // picker.slots[1] = {
+      //   defaultIndex: 1,
+      //   flex: 1,
+      //   valueIndex: 1,
+      //   values: [1, 2, 3, 4, 5]
+      // }
+      // console.log(picker.slots[1].values = [1, 2, 3, 4, 5])
+      console.log(picker.slots[1])
+      // this.endPicker.setSlotValue(0, this.endyear)
+      // this.endPicker.setSlotValue(1, this.endmonth)
+      // this.endyear = values[0]
+      // this.endmonth = values[1]
     }
   },
-  mounted () {
-    if (this.cate.filter === 'multi') {
-      // 复选默认第一个选中
-      this.$refs.multiItem[0].setAttribute('class', 'border active')
-    }
-  }
+  mounted () {}
 }
 </script>
 <style lang="stylus" scoped>
@@ -179,6 +232,7 @@ export default {
   .picker:last-child
     padding-left .22rem
   .picker-item
+    padding 0 .05rem
     color #0c6f92
   .picker-item.picker-selected
     color $borderColor
