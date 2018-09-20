@@ -189,20 +189,16 @@ export default {
       width .3rem
       background $borderColor
   .filter-item
-    padding 0 .2rem
-    display flex
-    flex-wrap wrap
+    padding 0 .1rem
+    display grid
+    grid-template-columns: repeat(3, 1fr)
     span
       flex 1
       display flex
       padding .05rem .1rem
       box-sizing border-box
       align-items center
-      width 30%
-      min-width 30%
-      max-width 30%
-      margin-top .2rem
-      margin-right .26rem
+      margin .2rem .1rem 0
       justify-content center
       text-align center
       height .7rem
@@ -215,8 +211,6 @@ export default {
         background-color $borderColor
         color $commonTxtColor
         border-radius 5px
-      &:nth-child(3n)
-        margin-right 0
   .filter-time
     h2
       margin .4rem 0 .14rem

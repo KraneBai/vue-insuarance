@@ -4,7 +4,7 @@
       <template v-for="cate of filterOpts">
         <filter-opts :cate="cate" :key="cate.type" @getType="getFilterInfo"></filter-opts>
       </template>
-      <filter-opts :cate="rate" @getType="getFilterInfo"></filter-opts>
+      <filter-opts v-if="type === 'all'" :cate="rate" @getType="getFilterInfo"></filter-opts>
     </div>
     <div class="btns">
       <button class="reset-btn">重置</button>
@@ -23,15 +23,16 @@ export default {
   },
   data () {
     return {
-      seachItem: {
+      seachItem: { // 默认搜索值
         age: '不限',
         education: '不限',
         sex: '不限',
         political: '不限',
         retain: ['13个月留存率']
       },
-      filterOpts: [],
-      rate: {}
+      filterOpts: [], // 其他单选
+      rate: {}, // 留存率
+      type: 'all' // 默认人员概览
     }
   },
   methods: {
@@ -62,6 +63,7 @@ export default {
   },
   mounted () {
     this.setData()
+    this.type = this.$route.query.type
   }
 }
 </script>

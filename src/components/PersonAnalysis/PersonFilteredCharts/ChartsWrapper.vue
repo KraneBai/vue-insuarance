@@ -91,13 +91,4 @@ export default {
     height 100%
     width 100%
     overflow hidden
-    // position absolute
-    // top 0
-    // left 0
-    // bottom 0
-    // overflow hidden
-    // width 100%
-    // .swiper-wrapper
-    //   padding 0 .3rem
-    //   box-sizing border-box
 </style>

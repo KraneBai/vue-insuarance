@@ -195,8 +195,8 @@ export default {
     }
   },
   methods: {
-    toFilterChartDetail () {
-      this.$router.push({name: 'PersonDetailOpts'})
+    toFilterChartDetail (type) {
+      this.$router.push({name: 'PersonDetailOpts', query: {type}})
     },
     _initScroll () {
       this.$nextTick(() => {

@@ -13,22 +13,22 @@
     <div class="center border">
       <h2 v-if="opts.cates !== 'industry'" class="border-bottom">{{opts.title}}</h2>
       <div class="industry-tab" v-else>
-        <span>政治面貌：共青团员</span>
-        <span>年龄：18-24岁</span>
-        <span>文化程度：高中</span>
-        <span>性别：男</span>
+        <span><strong>年龄：</strong>{{opts.selected.age}}</span>
+        <span><strong>性别：</strong>{{opts.selected.sex}}</span>
+        <span><strong>政治面貌：</strong>{{opts.selected.political}}</span>
+        <span><strong>文化程度：</strong>{{opts.selected.culture}}</span>
       </div>
       <highcharts class="pie-chart" :options="pieOpt"></highcharts>
     </div>
     <footer class="border">
       <h2 class="border-bottom">{{opts.subtitle}}</h2>
+      <aside>
+        <h3>{{opts.category}}</h3>
+        <h3>行业</h3>
+        <h3>公司</h3>
+        <h3>行业占比</h3>
+      </aside>
       <section>
-        <aside>
-          <h3>{{opts.category}}</h3>
-          <h3>行业</h3>
-          <h3>公司</h3>
-          <h3>行业占比</h3>
-        </aside>
         <div class="data-list" ref="wrapper" >
           <div class="data-list-inner" ref="tabContent">
             <div ref="tabItem" class="data-item" v-for="item in opts.footerList" :key="item.stage">
@@ -121,8 +121,12 @@ export default {
     _initScroll () {
       this.$nextTick(() => {
         if (this.$refs.tabItem) {
-          let len = this.$refs.tabItem.length
-          let width = this.$refs.tabItem[0].getBoundingClientRect().width * len
+          // let len = this.$refs.tabItem.length
+          // let width = this.$refs.tabItem[0].getBoundingClientRect().width * len
+          let width = 0
+          for (let i in this.$refs.tabItem) {
+            width += this.$refs.tabItem[i].getBoundingClientRect().width
+          }
           this.$refs.tabContent.style.width = width + 'px'
           if (!this.scrollX) {
             this.scrollX = new BScroll(this.$refs.wrapper, {
@@ -198,7 +202,7 @@ export default {
         height 0.6rem
         background $txtColor
   .center
-    padding .78rem 0.2rem .15rem
+    padding .88rem 0.2rem .15rem
     box-sizing border-box
     height 100%
     h2
@@ -210,44 +214,62 @@ export default {
       width 100%
       height 100%
     .industry-tab
-      padding-top .3rem
+      position absolute
+      top 0
+      left 0
+      right 0
       display flex
       flex-wrap wrap
+      padding-top .2rem
       font-size .13rem
+      z-index 9999
       span
         display inline-block
         box-sizing border-box
         padding-left .4rem
         line-height .4rem
-        width 50%
+        min-width 20%
+        // strong
+        //   color #ffc600
   footer
     position absolute
-    padding 0 0.2rem
-    bottom 0.2rem
+    padding 0 .2rem
+    bottom .2rem
     left 0
     right 0
     box-sizing border-box
     height 3.38rem
     section
-      padding-top 0.2rem
-      display: flex
-      line-height 0.52rem
-      font-size 0.22rem
-      aside
-        text-align center
-        min-width 1.1rem
+      position relative
+      box-sizing border-box
+      padding-top .2rem
+      margin-left 1.2rem
+      line-height .52rem
+      font-size .22rem
+      overflow hidden
       .data-list
-        flex 1
         .data-list-inner
           display flex
           flex-wrap nowrap
           .data-item
             flex 1
             text-align center
-            min-width 1.3rem
             h3
+              margin-right .1rem
+              min-width 1.3rem
               white-space nowrap
             span
+              margin-right .1rem
+              min-width 1.3rem
               display: block
               color: $orangeBottomColor
+    aside
+      position absolute
+      top .98rem
+      left .2rem
+      text-align center
+      line-height .52rem
+      font-size .22rem
+      width 1.2rem
+      z-index 9999
 </style>
