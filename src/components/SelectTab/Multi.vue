@@ -6,32 +6,31 @@
       <i v-if="(cate.type === 'company' || cate.type === 'area' || cate.type === 'time')"></i>
     </h3>
     <div class="filter-inp" v-if="cate.type === 'age'">
-      <input type="tel" v-model.trim="minage" placeholder="最小年龄">
+      <input type="text" placeholder="最小年龄">
       <span></span>
-      <input type="tel" v-model.trim="maxage" placeholder="最大年龄">
-      <a @click.prevent="clearInp">清空</a>
+      <input type="text" placeholder="最大年龄">
     </div>
     <div class="filter-item">
       <!-- 单选 -->
       <span
+        v-if="cate.filter === 'radio'"
         class="border"
-        :class="{active: curItem === key}"
-        v-for="(item, key) of cate.tabList"
+        v-for="(item, key) of cate.catesList"
         :key="key"
-        :style="{fontSize: item.length > 7 ? '.16rem' : '.22rem'}"
+        :style="{fontSize: item.name.length > 6 ? '.16rem' : '.22rem'}"
         @click="radioSelect(key, item, cate.type)"
-      >{{item}}</span>
+        :class="{active: curItem === key}"
+      >{{item.name}}</span>
       <!-- 多选 -->
       <span
         v-if="cate.filter === 'multi'"
         class="border"
-        v-for="(item, key) of cate.multiList"
+        v-for="(item, key) of cate.catesList"
         :key="key"
-        :class="{active: 0 === key}"
-        :style="{fontSize: item.length > 6 ? '.16rem' : '.22rem'}"
+        :style="{fontSize: item.name.length > 6 ? '.16rem' : '.22rem'}"
         @click="multiSelect(key, item, cate.type)"
         ref="multiItem"
-      >{{item}}</span>
+      >{{item.name}}</span>
     </div>
     <div class="filter-time" v-if="cate.type === 'time'">
       <h2>
@@ -85,55 +84,15 @@ export default {
           textAlign: 'left'
         }
       ],
-      minage: '',
-      maxage: '',
       curItem: 0, // 单选需要
       itemArr: [] // 多选传参需要
     }
   },
-  computed: {
-    inpage () {
-      return this.minage + '-' + this.maxage
-    }
-  },
-  watch: {
-    // 输入的年龄有值, tab消失
-    minage (val) {
-      if (val !== '') {
-        this.curItem = -1
-      }
-    },
-    maxage (val) {
-      if (val !== '') {
-        this.curItem = -1
-      }
-    },
-    inpage (val) {
-      if (val !== '-') {
-        val = val + '岁'
-        this.$emit('getType', {type: 'age', item: val})
-      } else {
-        this.$emit('getType', {type: 'age', item: '不限'})
-        if (this.curItem < 0) { // 控制inp框都为空时, 点击tab, 会选不到当前, 固定不限
-          this.curItem = 0
-        }
-      }
-    }
-  },
   methods: {
-    // 清空输入年龄
-    clearInp () {
-      // 清空当前输入的年龄
-      this.minage = ''
-      this.maxage = ''
-    },
     // 改变当前选中的tab
     radioSelect (key, item, type) {
-      if (type === 'age') { // 输入的年龄为空, 置空操作在前
-        this.minage = ''
-        this.maxage = ''
-      }
       this.curItem = key
+      if (type === 'time') {}
       // 传给上级当前选中的值, 更新搜索条件
       this.$emit('getType', {type, item})
     },
@@ -156,10 +115,8 @@ export default {
       this.$emit('getType', {type, item: this.itemArr})
     },
     startChange (picker, values) {
-      console.log(values)
     },
     endChange (picker, values) {
-      console.log(values)
     }
   },
   mounted () {
@@ -209,33 +166,10 @@ export default {
       transform rotate(-180deg)
       bg-img(.22rem, .12rem, left, center)
       background-image url(../../../assets/images/arrow_down.png)
-  .filter-item
-    padding 0 .1rem
-    display grid
-    grid-template-columns: repeat(3, 1fr)
-    span
-      flex 1
-      display flex
-      padding .05rem
-      box-sizing border-box
-      align-items center
-      margin .2rem .1rem 0
-      justify-content center
-      text-align center
-      height .7rem
-      color $txtColor
-      font-size .24rem
-      &::before
-        border-color $borderColor
-        border-radius 5px
-      &.active
-        background-color $borderColor
-        color $commonTxtColor
-        border-radius 5px
   .filter-inp
     display flex
     padding-left .2rem
-    padding-right .8rem
+    padding-right 1.1rem
     margin-top .2rem
     align-items center
     input
@@ -254,11 +188,29 @@ export default {
       height .02rem
       width .3rem
       background $borderColor
-    a
-      margin-left .2rem
-      font-size .2rem
-      white-space nowrap
-      color #25a4bb
+  .filter-item
+    padding 0 .1rem
+    display grid
+    grid-template-columns: repeat(3, 1fr)
+    span
+      flex 1
+      display flex
+      padding .05rem .1rem
+      box-sizing border-box
+      align-items center
+      margin .2rem .1rem 0
+      justify-content center
+      text-align center
+      height .7rem
+      color $txtColor
+      font-size .24rem
+      &::before
+        border-color $borderColor
+        border-radius 5px
+      &.active
+        background-color $borderColor
+        color $commonTxtColor
+        border-radius 5px
   .filter-time
     h2
       margin .4rem 0 .14rem

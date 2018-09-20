@@ -2,34 +2,48 @@
   "status": true,
   "radioOpts": [
     {
-      "curtab": 0,
-      "type": "political",
+      "type": "plitical",
       "category": "政治面貌",
       "tabList": ["不限", "群众", "共青团员", "中共党员", "民主党派人士"]
     },
     {
-      "curtab": 0,
       "type": "education",
       "category": "文化程度",
       "tabList": ["不限", "初中及以下", "高中", "技工学校", "中等专业学校和中等技术学校", "大学专科和专科学校", "大学本科", "研究生", "博士生"]
     },
     {
-      "curtab": 0,
       "type": "age",
       "category": "年龄",
       "tabList": ["不限", "18-24岁", "25-34岁", "35-44岁", "45-54岁", "55-64岁", "65岁以上"]
     },
     {
-      "curtab": 0,
       "type": "sex",
       "category": "性别",
       "tabList": ["不限", "男", "女"]
     }
   ],
-  "rate": {
-      "filter": "multi",
+  "multiOpts": [
+    {
       "type": "retain",
       "category": "留存率",
-      "multiList": ["13个月留存率", "7个月留存率", "4个月留存率", "3个月留存率"]
+      "catesList": [
+        {
+          "name": "13个月留存率",
+          "idx": 0
+        },
+        {
+          "name": "7个月留存率",
+          "idx": 3
+        },
+        {
+          "name": "4个月留存率",
+          "idx": 6
+        },
+        {
+          "name": "3个月留存率",
+          "idx": 6
+        }
+      ]
     }
+  ]
 }

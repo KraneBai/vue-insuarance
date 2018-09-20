@@ -37,93 +37,19 @@
     ],
     "filter": [
       {
-        "filter": "radio",
         "type": "time",
         "category": "时间区间",
-        "catesList": [
-          {
-            "name": "本月",
-            "idx": 0
-          },
-          {
-            "name": "近三个月",
-            "idx": 3
-          },
-          {
-            "name": "近六个月",
-            "idx": 6
-          }
-        ]
+        "tabList": ["本月", "近三个月", "近六个月"]
       },
       {
-        "filter": "radio",
         "type": "company",
         "category": "公司类型",
-        "catesList": [
-          {
-            "name": "行业",
-            "idx": 0
-          },
-          {
-            "name": "寿险类型",
-            "idx": 1
-          },
-          {
-            "name": "财险类型",
-            "idx": 2
-          },
-          {
-            "name": "中介类型",
-            "idx": 3
-          }
-        ]
+        "tabList": ["行业", "寿险类型", "财险类型", "中介类型"]
       },
       {
-        "filter": "radio",
         "type": "area",
         "category": "地区",
-        "catesList": [
-          {
-            "name": "全省",
-            "idx": 0
-          },
-          {
-            "name": "长春市",
-            "idx": 1
-          },
-          {
-            "name": "吉林市",
-            "idx": 2
-          },
-          {
-            "name": "四平市",
-            "idx": 3
-          },
-          {
-            "name": "辽源市",
-            "idx": 4
-          },
-          {
-            "name": "通化市",
-            "idx": 5
-          },
-          {
-            "name": "白山市",
-            "idx": 6
-          },
-          {
-            "name": "松原市",
-            "idx": 7
-          },
-          {
-            "name": "白城市",
-            "idx": 8
-          },
-          {
-            "name": "延边朝鲜族自治州",
-            "idx": 9
-          }
-        ]
+        "tabList": ["全省", "长春市", "吉林市", "四平市", "辽源市", "通化市", "白山市", "松原市", "白城市", "延边朝鲜族自治州"]
       }
     ],
     "charts": {

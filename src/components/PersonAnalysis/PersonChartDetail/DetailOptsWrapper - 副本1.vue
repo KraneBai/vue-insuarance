@@ -1,74 +1,59 @@
 <template>
   <div class="filter-opts">
     <div class="filter-opts-inner">
-      <template v-for="radio of radioOpts">
-        <filter-opts ref="radioItems" :cate="radio" :key="radio.type" @getType="getFilterInfo"></filter-opts>
+      <template v-for="item of radioOpts">
+        <radio :radio="item" :key="item.type" @getType="getFilterInfo"></radio>
       </template>
-      <filter-opts v-if="type === 'all'" :cate="rate" @getType="getFilterInfo"></filter-opts>
     </div>
     <div class="btns">
-      <button class="reset-btn" @click="reset">重置</button>
+      <button class="reset-btn">重置</button>
       <button class="search-btn" @click="searchChart">搜索</button>
     </div>
   </div>
 </template>
 <script>
 import FilterOpts from './FilterOpts'
+import Radio from '../../SelectTab/Radio'
 import axios from 'axios'
 export default {
   name: 'DetailOptsWrapper',
   props: {},
   components: {
-    FilterOpts
+    FilterOpts,
+    Radio
   },
   data () {
     return {
-      searchItem: { // 默认搜索值
+      seachItem: { // 默认搜索值
         age: '不限',
         education: '不限',
         sex: '不限',
         political: '不限',
         retain: ['13个月留存率']
       },
-      radioOpts: [], // 单选项目
-      rate: {}, // 留存率多选
+      radioOpts: [], // 其他单选
+      rate: {}, // 留存率
       type: 'all' // 默认人员概览
     }
   },
   methods: {
     // 子组件传给父组件, 改变搜索条件值
     getFilterInfo (info) {
-      this.searchItem[info.type] = info.item
+      this.seachItem[info.type] = info.item
     },
     // 搜索
     searchChart () {
-      console.log(this.searchItem)
-      // this.$router.push({name: 'PersonChartsWrapper'})
-    },
-    // 重置筛选
-    reset () {
-      for (let item of this.$refs.radioItems) {
-        item.$data.curItem = 0
-        item.$data.minage = ''
-        item.$data.maxage = ''
-      }
-      this.searchItem = { // 重置搜索值
-        age: '不限',
-        education: '不限',
-        sex: '不限',
-        political: '不限',
-        retain: []
-      }
+      console.log(this.seachItem)
+      this.$router.push({name: 'PersonChartsWrapper'})
     },
     setData () {
       this.$indicator.open()
-      axios.get('/api/detailFilter.json')
+      axios.get('/api/detailSelectTab.json')
         .then((res) => {
           this.$indicator.close()
           let data = res.data
           if (data.status) {
             this.radioOpts = data.radioOpts
-            this.rate = data.rate
           }
         })
         .catch(() => {
