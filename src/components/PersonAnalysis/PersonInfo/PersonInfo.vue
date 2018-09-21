@@ -24,8 +24,6 @@
         :bottom-method="loadBottom"
         v-if="!noData"
       >
-        <!-- <messages :messages="messages" v-if="isActive"></messages>
-        <reports :reports="reports" v-else></reports> -->
         <info-list :messages="lists"></info-list>
       </mt-loadmore>
       <div class="noData" v-else>暂无数据</div>
