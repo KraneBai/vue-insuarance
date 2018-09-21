@@ -43,7 +43,7 @@
 <script>
 import BScroll from 'better-scroll'
 export default {
-  name: 'PersonChart',
+  name: 'PChart',
   props: {
     type: Object
   },

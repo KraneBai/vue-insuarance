@@ -15,7 +15,7 @@
 <script>
 import axios from 'axios'
 export default {
-  name: 'Details',
+  name: 'InfoDetail',
   data () {
     return {
       details: {}

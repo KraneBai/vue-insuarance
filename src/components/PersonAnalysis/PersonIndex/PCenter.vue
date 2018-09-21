@@ -22,7 +22,7 @@
 </template>
 <script>
 export default {
-  name: 'PersonCenter',
+  name: 'PCenter',
   props: {
     overviews: Object
   },

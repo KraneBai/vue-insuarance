@@ -6,7 +6,7 @@
         class="first"
         @click="toggleTab('messages')"
       >
-        消息
+        通知公告
       </span>
       <span
         :class="{active: !isActive}"
@@ -24,29 +24,29 @@
         :bottom-method="loadBottom"
         v-if="!noData"
       >
-        <messages :messages="messages" v-if="isActive"></messages>
-        <reports :reports="reports" v-else></reports>
+        <!-- <messages :messages="messages" v-if="isActive"></messages>
+        <reports :reports="reports" v-else></reports> -->
+        <info-list :messages="lists"></info-list>
       </mt-loadmore>
       <div class="noData" v-else>暂无数据</div>
     </div>
   </div>
 </template>
 <script>
-import Messages from './Messages'
-import Reports from './Reports'
+import InfoList from './InfoList'
 import axios from 'axios'
 export default {
-  name: 'Lists',
+  name: 'PersonInfo',
   components: {
-    Messages,
-    Reports
+    InfoList
   },
   data () {
     return {
       tab: 'messages',
       isActive: true,
-      messages: [],
-      reports: [],
+      messages: [], // 存放通知公告
+      reports: [], // 存放分析报告数据
+      lists: [], // 实际传给列表页面的数组
       pages: 1
     }
   },
@@ -73,6 +73,7 @@ export default {
         if (this[type].length === 0) {
           this.setData(this.tab, 'init')
         }
+        this.lists = this[type]
       }
     },
     loadTop () {
@@ -96,16 +97,20 @@ export default {
             if (type === 'loadmore') {
               if (tab === 'messages') {
                 this.messages.push(...data.data.lists)
+                this.lists = this.messages
               } else {
                 this.reports.push(...data.data.lists)
+                this.lists = this.reports
               }
               this.$refs.loadmore.onBottomLoaded()
               this.allLoaded = true // 若数据已全部获取完毕
             } else {
               if (tab === 'messages') {
                 this.messages = data.data.lists
+                this.lists = this.messages
               } else {
                 this.reports = data.data.lists
+                this.lists = this.reports
               }
               if (type === 'reload') {
                 this.$refs.loadmore.onTopLoaded()

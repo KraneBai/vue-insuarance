@@ -14,7 +14,7 @@
 </template>
 <script>
 export default {
-  name: 'Messages',
+  name: 'InfoList',
   props: {
     messages: Array
   },
@@ -26,8 +26,7 @@ export default {
   methods: {
     // 详细查看
     details (id) {
-      console.log(id)
-      this.$router.push({name: 'PersonListDetail', params: { id }})
+      this.$router.push({name: 'InfoDetail', params: { id }})
     }
   }
 }

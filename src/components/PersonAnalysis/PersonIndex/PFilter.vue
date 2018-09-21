@@ -2,7 +2,16 @@
   <div class="filter-content">
     <div class="filter-inner">
       <template v-for="cate of overviews.filter">
-        <filter-opts ref="radioItems" :cate="cate" :key="cate.type" @getType="getFilterInfo"></filter-opts>
+        <filter-opts
+          ref="radioItems"
+          :cate="cate"
+          :ostartyear="overviews.startyear"
+          :ostartmonth="overviews.startmonth"
+          :oendyear="overviews.endyear"
+          :oendmonth="overviews.endmonth"
+          :key="cate.type"
+          @getType="getFilterInfo"
+        ></filter-opts>
       </template>
     </div>
     <div class="btns">
@@ -14,7 +23,7 @@
 <script>
 import FilterOpts from '../PersonChartDetail/FilterOpts'
 export default {
-  name: 'PersonFilter',
+  name: 'PFilter',
   components: {
     FilterOpts
   },
@@ -57,6 +66,9 @@ export default {
     getFilterInfo (info) {
       this.searchItem[info.type] = info.item
     }
+  },
+  mounted () {
+    console.log(this.overviews)
   }
 }
 </script>

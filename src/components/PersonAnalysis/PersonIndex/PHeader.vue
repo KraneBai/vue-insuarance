@@ -8,11 +8,12 @@
         <dt>{{overviews.name}}</dt>
         <dd>{{overviews.company}}</dd>
       </dl>
-      <i @click="messageList"></i>
+      <i class="alert" @click="messageList"></i>
+      <i class="messages" @click="messageList"></i>
     </header>
     <nav class="border">
       <dl>
-        <dt>{{overviews.date}} | {{overviews.industry}}</dt>
+        <dt>{{overviews.startyear}}/{{overviews.startmonth}} - {{overviews.endyear}}/{{overviews.endmonth}} | {{overviews.industry}}</dt>
         <dd>{{overviews.province}}->{{overviews.city}}</dd>
       </dl>
       <i @click="filterShow">筛选</i>
@@ -21,14 +22,14 @@
 </template>
 <script>
 export default {
-  name: 'PersonHeader',
+  name: 'PHeader',
   props: {
     overviews: Object
   },
   methods: {
     // 消息列表
     messageList () {
-      this.$router.push({name: 'PersonList'})
+      this.$router.push({name: 'PersonInfo'})
     },
     // 传递给父级, 显示左边栏
     centerShow () {
@@ -64,7 +65,7 @@ export default {
         line-height .38rem
         font-size .22rem
         color $commonTxtColor
-    i
+    i.messages
       position absolute
       right .3rem
       top .32rem
@@ -72,6 +73,14 @@ export default {
       height .33rem
       bg-img(100%, 100%, left, top)
       background-image url(../../../assets/images/news.png)
+    i.alert
+      position absolute
+      right .68rem
+      top .42rem
+      width .14rem
+      height .14rem
+      bg-img(100%, 100%, left, top)
+      background-image url(../../../assets/images/point.png)
   nav
     margin .23rem 0
     display flex

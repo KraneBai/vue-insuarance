@@ -3,7 +3,7 @@
     <h3>
       {{cate.category}}
       <span v-if="cate.type === 'time'">{{startyear}}/{{startmonth}}-{{endyear}}/{{endmonth}}</span>
-      <i v-if="(cate.type === 'company' || cate.type === 'area' || cate.type === 'time')"></i>
+      <!-- <i v-if="(cate.type === 'company' || cate.type === 'area' || cate.type === 'time')"></i> -->
     </h3>
     <div class="filter-inp" v-if="cate.type === 'age'">
       <input type="tel" v-model.trim="minage" placeholder="最小年龄">
@@ -20,6 +20,7 @@
         :key="key"
         :style="{fontSize: item.length > 7 ? '.16rem' : '.22rem'}"
         @click="radioSelect(key, item, cate.type)"
+        :ref="cate.type"
       >{{item}}</span>
       <!-- 多选 -->
       <span
@@ -49,42 +50,20 @@
 export default {
   name: 'FilterOpts',
   props: {
-    cate: Object
+    cate: Object,
+    ostartyear: String,
+    ostartmonth: String,
+    oendyear: String,
+    oendmonth: String
   },
   data () {
     return {
       startPicker: '',
       endPicker: '',
-      startyear: '',
-      startmonth: '',
-      endyear: new Date().getFullYear(),
-      endmonth: new Date().getMonth() + 1,
-      slotsStart: [
-        {
-          defaultIndex: 1, // 默认第几个
-          flex: 1,
-          values: [2017, 2018],
-          textAlign: 'right'
-        },
-        {
-          defaultIndex: 11,
-          flex: 1,
-          values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-        }
-      ],
-      slotsEnd: [
-        {
-          defaultIndex: 1,
-          flex: 1,
-          values: [2017, 2018],
-          textAlign: 'right'
-        },
-        {
-          defaultIndex: new Date().getMonth() + 1,
-          flex: 1,
-          values: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
-        }
-      ],
+      startyear: this.ostartyear,
+      startmonth: this.ostartmonth,
+      endyear: this.oendyear,
+      endmonth: this.oendmonth,
       minage: '',
       maxage: '',
       curItem: 0, // 单选需要
@@ -94,21 +73,49 @@ export default {
   computed: {
     inpage () {
       return this.minage + '-' + this.maxage
+    },
+    slotsStart () {
+      let arr = []
+      let month = new Date().getMonth() + 1
+      for (let i = 1; i <= month; i++) {
+        arr.push(i)
+      }
+      let start = [
+        {
+          defaultIndex: new Date().getMonth() - 6 >= 0 ? new Date().getFullYear() - 2017 : new Date().getFullYear() - 2018, // 默认第几个
+          flex: 1,
+          values: [2017, 2018],
+          textAlign: 'right'
+        },
+        {
+          defaultIndex: new Date().getMonth() - 6 >= 0 ? new Date().getMonth() - 6 : 12 - Math.abs(new Date().getMonth() - 6),
+          flex: 1,
+          values: arr
+        }
+      ]
+      return start
+    },
+    slotsEnd () {
+      let arr = []
+      let month = new Date().getMonth() + 1
+      for (let i = 1; i <= month; i++) {
+        arr.push(i)
+      }
+      let end = [
+        {
+          defaultIndex: new Date().getFullYear() - 2017,
+          flex: 1,
+          values: [2017, 2018],
+          textAlign: 'right'
+        },
+        {
+          defaultIndex: new Date().getMonth(),
+          flex: 1,
+          values: arr
+        }
+      ]
+      return end
     }
-    // startyear () {
-    //   if (this.endmonth - 6 >= 1) {
-    //     return this.endyear
-    //   } else {
-    //     return this.endyear - 1
-    //   }
-    // },
-    // startmonth () {
-    //   if (this.endmonth - 6 >= 1) {
-    //     return this.endmonth - 6
-    //   } else {
-    //     return 12 - Math.abs(this.endmonth - 6)
-    //   }
-    // }
   },
   watch: {
     // 输入的年龄有值, tab消失
@@ -132,29 +139,6 @@ export default {
           this.curItem = 0
         }
       }
-    },
-    curItem (val) {
-      let minus = 0
-      if (val === 1) {
-        minus = 3 // 近3个月
-      }
-      if (val === 2) {
-        minus = 6 // 近6个月
-      }
-      let today = new Date()
-      this.endmonth = today.getMonth() + 1
-      this.endyear = today.getFullYear()
-      if (this.endmonth - minus > 1) {
-        this.startmonth = this.endmonth - minus
-        this.startyear = this.endyear
-      } else {
-        this.startmonth = 12 - Math.abs(this.endmonth - minus)
-        this.startyear = this.endyear - 1
-      }
-      this.startPicker.setSlotValue(0, this.startyear)
-      this.startPicker.setSlotValue(1, this.startmonth)
-      this.endPicker.setSlotValue(0, this.endyear)
-      this.endPicker.setSlotValue(1, this.endmonth)
     }
   },
   methods: {
@@ -170,8 +154,29 @@ export default {
         this.minage = ''
         this.maxage = ''
       }
-      if (item === '本月') {
-        this.endyear = new Date().getFullYear()
+      if (type === 'time') {
+        let minus = 0
+        if (key === 1) {
+          minus = 3 // 近3个月
+        }
+        if (key === 2) {
+          minus = 6 // 近6个月
+        }
+        let today = new Date()
+        this.endmonth = today.getMonth() + 1
+        this.endyear = today.getFullYear()
+        if (this.endmonth - minus > 1) {
+          this.startmonth = this.endmonth - minus
+          this.startyear = this.endyear
+        } else {
+          this.startmonth = 12 - Math.abs(this.endmonth - minus)
+          this.startyear = this.endyear - 1
+        }
+        this.startPicker.setValues([this.startyear, this.startmonth])
+        this.endPicker.setValues([this.endyear, this.endmonth])
+        setTimeout(() => {
+          this.$refs.time[key].setAttribute('class', 'border active')
+        }, 50)
       }
       this.curItem = key
       // 传给上级当前选中的值, 更新搜索条件
@@ -197,27 +202,45 @@ export default {
     },
     startChange (picker, values) {
       this.startPicker = picker
-      // this.startPicker.setSlotValue(0, this.startyear)
-      // this.startPicker.setSlotValue(1, this.startmonth)
-      // this.startyear = values[0]
-      // this.startmonth = values[1]
-      // console.log(this.startPicker.getSlotValues(1))
-      // console.log(this.startPicker.setSlotValues(0, ['2003', '2004', '2005', '2006', '2007', '2008',]))
+      this.startyear = this.startPicker.getValues()[0]
+      this.startmonth = this.startPicker.getValues()[1]
+      for (let item of this.$refs.time) {
+        item.setAttribute('class', 'border')
+      }
+      let montharr = []
+      if (this.startPicker.getValues()[0] === 2017) {
+        montharr = [12]
+        this.startPicker.setSlotValues(1, montharr)
+      } else if (this.startPicker.getValues()[0] === new Date().getFullYear()) {
+        for (let i = 1; i <= new Date().getMonth() + 1; i++) {
+          montharr.push(i)
+        }
+        this.startPicker.setSlotValues(1, montharr)
+      } else {
+        montharr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        this.startPicker.setSlotValues(1, montharr)
+      }
     },
     endChange (picker, values) {
-      // this.endPicker = picker
-      // picker.slots[1] = {
-      //   defaultIndex: 1,
-      //   flex: 1,
-      //   valueIndex: 1,
-      //   values: [1, 2, 3, 4, 5]
-      // }
-      // console.log(picker.slots[1].values = [1, 2, 3, 4, 5])
-      console.log(picker.slots[1])
-      // this.endPicker.setSlotValue(0, this.endyear)
-      // this.endPicker.setSlotValue(1, this.endmonth)
-      // this.endyear = values[0]
-      // this.endmonth = values[1]
+      this.endPicker = picker
+      this.endyear = this.endPicker.getValues()[0]
+      this.endmonth = this.endPicker.getValues()[1]
+      for (let item of this.$refs.time) {
+        item.setAttribute('class', 'border')
+      }
+      let montharr = []
+      if (this.endPicker.getValues()[0] === 2017) {
+        montharr = [12]
+        this.endPicker.setSlotValues(1, montharr)
+      } else if (this.endPicker.getValues()[0] === new Date().getFullYear()) {
+        for (let i = 1; i <= new Date().getMonth() + 1; i++) {
+          montharr.push(i)
+        }
+        this.endPicker.setSlotValues(1, montharr)
+      } else {
+        montharr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+        this.endPicker.setSlotValues(1, montharr)
+      }
     }
   },
   mounted () {}
@@ -253,16 +276,16 @@ export default {
       margin-left .2rem
       color $txtColor
       letter-spacing .02rem
-    i
-      position absolute
-      right .22rem
-      top 50%
-      margin-top -0.06rem
-      width .22rem
-      height .12rem
-      transform rotate(-180deg)
-      bg-img(.22rem, .12rem, left, center)
-      background-image url(../../../assets/images/arrow_down.png)
+    // i
+    //   position absolute
+    //   right .22rem
+    //   top 50%
+    //   margin-top -0.06rem
+    //   width .22rem
+    //   height .12rem
+    //   transform rotate(-180deg)
+    //   bg-img(.22rem, .12rem, left, center)
+    //   background-image url(../../../assets/images/arrow_down.png)
   .filter-item
     padding 0 .1rem
     display grid
@@ -310,7 +333,7 @@ export default {
       background $borderColor
     a
       margin-left .2rem
-      font-size .2rem
+      font-size .26rem
       white-space nowrap
       color #25a4bb
   .filter-time

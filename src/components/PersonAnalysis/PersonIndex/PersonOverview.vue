@@ -1,43 +1,43 @@
 <template>
   <div class="person-overview">
-    <person-header
+    <p-header
       @centerControl="CenterControl"
       @filterControl="FilterControl"
       :overviews="overviews"
-    ></person-header>
+    ></p-header>
     <div class="charts" ref="swiper">
       <div class="swiper-wrapper">
-        <person-chart
+        <p-chart
           class="swiper-slide"
           :type="item"
           :key="index"
           v-for="(item, index) of overviews.charts"
-        ></person-chart>
+        ></p-chart>
       </div>
       <div class="swiper-pagination"></div>
     </div>
     <Drawer :closable="false" v-model="centerShow" placement="left">
-      <person-center :overviews="overviews"></person-center>
+      <p-center :overviews="overviews"></p-center>
     </Drawer>
     <Drawer :closable="false" v-model="filterShow">
-      <person-filter :overviews="overviews"></person-filter>
+      <p-filter :overviews="overviews"></p-filter>
     </Drawer>
   </div>
 </template>
 <script>
-import PersonHeader from './Personal/PersonHeader'
-import PersonCenter from './Personal/PersonCenter'
-import PersonFilter from './Personal/PersonFilter'
-import PersonChart from './Personal/PersonChart'
+import PHeader from './PHeader'
+import PCenter from './PCenter'
+import PFilter from './PFilter'
+import PChart from './PChart'
 import axios from 'axios'
 import Swiper from 'swiper'
 export default {
   name: 'PersonOverview',
   components: {
-    PersonHeader,
-    PersonCenter,
-    PersonFilter,
-    PersonChart
+    PHeader,
+    PCenter,
+    PFilter,
+    PChart
   },
   data () {
     return {

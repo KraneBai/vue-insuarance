@@ -4,9 +4,11 @@ import Router from 'vue-router'
 import Login from '@/components/Login/Login' // 登录
 import SelectPlatform from '@/components/Login/SelectPlatform' // 选择平台
 
-import PersonOverview from '@/components/PersonAnalysis/PersonOverview' // 人员概览
-import PersonList from '@/components/PersonAnalysis/PersonList/List' // 右上角信息列表
-import PersonListDetail from '@/components/PersonAnalysis/PersonList/Detail' // 信息列表的信息详细
+import PersonOverview from '@/components/PersonAnalysis/PersonIndex/PersonOverview' // 人员概览
+
+import PersonInfo from '@/components/PersonAnalysis/PersonInfo/PersonInfo' // 右上角信息列表
+import InfoDetail from '@/components/PersonAnalysis/PersonInfo/InfoDetail' // 信息列表的信息详细
+
 import PersonDetailOpts from '@/components/PersonAnalysis/PersonChartDetail/DetailOptsWrapper' // 人员概览图表详细
 import PersonChartsWrapper from '@/components/PersonAnalysis/PersonFilteredCharts/ChartsWrapper' // 详细筛选后的图表
 
@@ -30,14 +32,14 @@ export default new Router({
       component: PersonOverview
     },
     {
-      path: '/PersonList',
-      name: 'PersonList',
-      component: PersonList
+      path: '/PersonInfo',
+      name: 'PersonInfo',
+      component: PersonInfo
     },
     {
-      path: '/PersonListDetail/id/:id',
-      name: 'PersonListDetail',
-      component: PersonListDetail
+      path: '/InfoDetail/id/:id',
+      name: 'InfoDetail',
+      component: InfoDetail
     },
     {
       path: '/PersonDetailOpts',
