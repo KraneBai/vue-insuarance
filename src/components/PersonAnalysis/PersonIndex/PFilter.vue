@@ -1,18 +1,21 @@
 <template>
   <div class="filter-content">
     <div class="filter-inner">
-      <template v-for="cate of overviews.filter">
-        <filter-opts
-          ref="radioItems"
-          :cate="cate"
+      <radio @getType="getFilterInfo" :radio="timeRadio" ref="timezone">
+        <span slot="subtit">{{timeRange}}</span>
+        <date
+          slot="picker"
+          @dateRange="getDateRange"
           :ostartyear="overviews.startyear"
           :ostartmonth="overviews.startmonth"
           :oendyear="overviews.endyear"
           :oendmonth="overviews.endmonth"
-          :key="cate.type"
-          @getType="getFilterInfo"
-        ></filter-opts>
-      </template>
+          :changed="pickerChange"
+          v-if="showDate"
+        ></date>
+      </radio>
+      <radio @getType="getFilterInfo" :radio="companyRadio" ref="companyzone"></radio>
+      <radio @getType="getFilterInfo" :radio="areaRadio" ref="areazone"></radio>
     </div>
     <div class="btns">
       <button class="reset-btn" @click="reset">重置</button>
@@ -21,14 +24,22 @@
   </div>
 </template>
 <script>
-import FilterOpts from '../PersonChartDetail/FilterOpts'
+import Radio from '../../Common/Radio'
+import Date from '../../Common/Date'
 export default {
   name: 'PFilter',
   components: {
-    FilterOpts
+    Radio,
+    Date
   },
   props: {
-    overviews: Object
+    overviews: Object,
+    showDate: Boolean
+  },
+  computed: {
+    timeRange () {
+      return this.startyear + '/' + this.startmonth + '-' + this.endyear + '/' + this.endmonth
+    }
   },
   data () {
     return {
@@ -36,13 +47,65 @@ export default {
         time: '',
         company: '行业',
         area: '全省'
+      },
+      pickerChange: false,
+      startyear: null,
+      startmonth: null,
+      endyear: null,
+      endmonth: null,
+      timeRadio: {
+        tit: '时间区间',
+        type: 'time',
+        items: ['本月', '近三个月', '近六个月'],
+        startyear: 2018,
+        startmonth: 3,
+        endyear: 2018,
+        endmonth: 9
+      },
+      companyRadio: {
+        tit: '公司类型',
+        type: 'company',
+        items: ['行业', '寿险类型', '财险类型', '中介类型']
+      },
+      areaRadio: {
+        tit: '地区',
+        type: 'area',
+        items: ['全省', '长春市', '吉林市', '四平市', '辽源市', '通化市', '白山市', '松原市', '白城市', '延边朝鲜族自治州']
+      }
+    }
+  },
+  watch: {
+    pickerChange (val) {
+      let timeSpans = this.$refs.timezone.$el.children[1].children
+      if (val) {
+        for (let item of timeSpans) {
+          item.setAttribute('class', 'border')
+        }
       }
     }
   },
   methods: {
+    getDateRange (date) {
+      this.startyear = date.startyear
+      this.startmonth = date.startmonth
+      this.endyear = date.endyear
+      this.endmonth = date.endmonth
+      this.pickerChange = date.changed
+    },
     // 点击空白隐藏左边栏
     filterHide () {
       this.$emit('filterControl', false)
+    },
+    // 子组件传给父组件, 改变搜索条件值
+    getFilterInfo (info) {
+      this.searchItem[info.type] = info.item
+      if (info.type === 'time') {
+        this.pickerChange = info.changed
+        this.startyear = info.startyear
+        this.startmonth = info.startmonth
+        this.endyear = info.endyear
+        this.endmonth = info.endmonth
+      }
     },
     // 搜索
     search () {
@@ -51,25 +114,20 @@ export default {
     },
     // 重置筛选
     reset () {
-      for (let item of this.$refs.radioItems) {
-        item.$data.curItem = 0
-        item.$data.minage = ''
-        item.$data.maxage = ''
+      for (let keys in this.$refs) {
+        this.$refs[keys].$data.curItem = 0
       }
       this.searchItem = { // 重置搜索值
         time: '',
         company: '行业',
         area: '全省'
       }
-    },
-    // 子组件传给父组件, 改变搜索条件值
-    getFilterInfo (info) {
-      this.searchItem[info.type] = info.item
     }
   },
-  mounted () {
-    console.log(this.overviews)
-  }
+  updated () {
+    // this.startyear = this.overviews.startyear
+  },
+  mounted () {}
 }
 </script>
 <style lang="stylus" scoped>
@@ -80,6 +138,20 @@ export default {
     height 100%
     overflow-y auto
     -webkit-overflow-scrolling touch
+    span
+      margin-left .2rem
+      color $txtColor
+      letter-spacing .02rem
+    // i.arrow
+    //   position absolute
+    //   right .22rem
+    //   top 50%
+    //   margin-top -0.06rem
+    //   width .22rem
+    //   height .12rem
+    //   transform rotate(-180deg)
+    //   bg-img(.22rem, .12rem, left, center)
+    //   background-image url(../../../assets/images/arrow_down.png)
 .btns
   position fixed
   width 75%

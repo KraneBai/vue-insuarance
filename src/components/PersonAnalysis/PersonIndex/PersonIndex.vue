@@ -20,7 +20,7 @@
       <p-center :overviews="overviews"></p-center>
     </Drawer>
     <Drawer :closable="false" v-model="filterShow">
-      <p-filter :overviews="overviews"></p-filter>
+      <p-filter :overviews="overviews" :showDate="filterShow"></p-filter>
     </Drawer>
   </div>
 </template>

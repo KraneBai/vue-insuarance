@@ -8,14 +8,14 @@
 </template>
 <script>
 export default {
-  name: 'SelectPlatform',
+  name: 'Platform',
   data () {
     return {}
   },
   methods: {
     // 人员概览
     personDetail () {
-      this.$router.push({name: 'PersonOverview'})
+      this.$router.push({name: 'PersonIndex'})
     }
   }
 }
