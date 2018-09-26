@@ -36,7 +36,6 @@ export default {
   },
   methods: {
     _initSlot (type) {
-      // console.log(this.timerange)
       let month = new Date().getMonth()
       let monthArr = []
       let monthIdx = null

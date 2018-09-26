@@ -7,7 +7,6 @@
           v-for="(item, index) of allCharts"
           :key="index"
           :opts="item"
-          :series="item.series"
         ></d-chart>
       </div>
       <div class="swiper-pagination"></div>
@@ -25,12 +24,7 @@ export default {
   },
   data () {
     return {
-      allCharts: [],
-      sexOpts: {},
-      ageOpts: {},
-      politicalOpts: {},
-      cultureOpts: {},
-      industryOpts: {}
+      allCharts: []
     }
   },
   methods: {

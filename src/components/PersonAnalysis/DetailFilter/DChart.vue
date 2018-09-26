@@ -48,8 +48,7 @@ import BScroll from 'better-scroll'
 export default {
   name: 'DChart',
   props: {
-    opts: Object,
-    series: Object
+    opts: Object
   },
   data () {
     return {
@@ -121,8 +120,6 @@ export default {
     _initScroll () {
       this.$nextTick(() => {
         if (this.$refs.tabItem) {
-          // let len = this.$refs.tabItem.length
-          // let width = this.$refs.tabItem[0].getBoundingClientRect().width * len
           let width = 0
           for (let i in this.$refs.tabItem) {
             width += this.$refs.tabItem[i].getBoundingClientRect().width
@@ -229,8 +226,6 @@ export default {
         padding-left .4rem
         line-height .4rem
         min-width 20%
-        // strong
-        //   color #ffc600
   footer
     position absolute
     padding 0 .2rem
