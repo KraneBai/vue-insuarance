@@ -1,7 +1,7 @@
 <template>
   <form>
-    <div class="inp-wrapper border-bottom tel">
-      <input type="tel" placeholder="请输入手机号">
+    <div class="inp-wrapper border-bottom username">
+      <span>18888888888</span>
     </div>
     <div class="inp-wrapper border-bottom password">
       <input type="password" placeholder="请输入新密码">

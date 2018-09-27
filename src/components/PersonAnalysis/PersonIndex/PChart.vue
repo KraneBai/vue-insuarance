@@ -221,9 +221,7 @@ export default {
     _initChart () {
       // pie图  动态改变obj的值
       this.pieOpt = Object.assign({}, this.commonChart, this.pieOpt, this.type.pieData)
-      this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {layout: 'vertical'})
-      this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {x: 5, y: -5})
-      this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {symbolWidth: 0})
+      this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {layout: 'vertical'}, {x: 5, y: -5}, {symbolWidth: 0})
       // line图
       this.lineOpt = Object.assign({}, this.commonChart, this.lineOpt, this.type.lineData)
     }

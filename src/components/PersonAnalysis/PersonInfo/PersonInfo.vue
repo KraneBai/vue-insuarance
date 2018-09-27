@@ -131,12 +131,13 @@ export default {
   color $txtColor
 .lists
   position relative
-  page-style()
+  width 100%
+  min-height 100%
+  background linear-gradient(to bottom, #182649, #1d5174)
   header
     padding .3rem 0
     text-align center
     font-size 0
-    background $bodyColor
     z-index 999
     &::before
       border-color $borderBottomColor

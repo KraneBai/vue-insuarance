@@ -75,10 +75,11 @@ export default {
       background-image url(../../../assets/images/news.png)
     i.alert
       position absolute
-      right .68rem
-      top .42rem
+      right .24rem
+      top .32rem
       width .14rem
       height .14rem
+      z-index 99
       bg-img(100%, 100%, left, top)
       background-image url(../../../assets/images/point.png)
   nav

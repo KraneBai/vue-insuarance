@@ -29,6 +29,7 @@ export default {
   .inp-wrapper
     padding .58rem 0 .2rem .56rem
     position relative
+    line-height .4rem
     bg-img(.38rem, .38rem, left, .58rem)
     &::before
       border-color #fff
