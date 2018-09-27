@@ -29,7 +29,6 @@ import Multi from '../../Common/Multi'
 import axios from 'axios'
 export default {
   name: 'DetailFilter',
-  props: {},
   components: {
     Radio,
     Multi
@@ -50,47 +49,34 @@ export default {
       type: 'all' // 默认人员概览
     }
   },
-  computed: {
-    inpage () {
-      return this.minage + '-' + this.maxage
-    }
-  },
   watch: {
-    // 输入的年龄有值, tab消失
     minage (val) {
-      this.clearAgeTab(val)
+      if (val) {
+        this.$refs.agezone[0].$data.curItem = -1
+      } else if (!this.maxage) {
+        let curAgeTab = this.$refs.agezone[0].$data.curItem
+        this.$refs.agezone[0].$data.curItem = curAgeTab === -1 ? 0 : curAgeTab
+      }
     },
     maxage (val) {
-      this.clearAgeTab(val)
-    },
-    // minage - maxage 表示
-    inpage (val) {
-      if (val !== '-') {
-        this.searchItem['age'] = val
-      } else {
-        // input内容为空时, 自动加上不限的选中
-        this.$refs.agezone[0].$el.children[2].children[0].setAttribute('class', 'border active')
-        this.searchItem['age'] = '不限'
+      if (val) {
+        // curAgeTab = -1 无效
+        this.$refs.agezone[0].$data.curItem = -1
+      } else if (!this.minage) {
+        let curAgeTab = this.$refs.agezone[0].$data.curItem
+        this.$refs.agezone[0].$data.curItem = curAgeTab === -1 ? 0 : curAgeTab
       }
     }
   },
   methods: {
-    // 当年龄input有值时, 年龄Tab取消选中
-    clearAgeTab (val) {
-      if (val !== '') {
-        let ageSpans = this.$refs.agezone[0].$el.children[2].children
-        if (val) {
-          for (let item of ageSpans) {
-            item.setAttribute('class', 'border')
-          }
-        }
-      }
-    },
     // 清空输入年龄
     clearInp () {
       // 清空当前输入的年龄
       this.minage = ''
       this.maxage = ''
+      if (this.$refs.agezone[0].$data.curItem < 1) {
+        this.$refs.agezone[0].$data.curItem = 0
+      }
     },
     // 子组件传给父组件, 改变搜索条件值
     getFilterInfo (info) {
@@ -122,7 +108,7 @@ export default {
     },
     setData () {
       this.$indicator.open()
-      axios.get('/api/filterDetail.json')
+      axios.get('/api/detailFilter.json')
         .then((res) => {
           this.$indicator.close()
           let data = res.data

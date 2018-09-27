@@ -1,27 +1,42 @@
 <template>
-  <div class="filter-time">
-    <h2>
-      <span>开始日期</span>
-      <span>结束日期</span>
-    </h2>
-    <div class="time-wrapper">
-      <mt-picker ref="startPicker" :visibleItemCount="3" :slots="slotsStart" @change="startChange"></mt-picker>
-      <mt-picker ref="endPicker" :visibleItemCount="3" :slots="slotsEnd" @change="endChange"></mt-picker>
+  <section class="filter-opts-item border-bottom">
+    <h3>{{radio.tit}}<span>{{cstartyear}}/{{cstartmonth}}-{{cendyear}}/{{cendmonth}}</span></h3>
+    <div class="filter-item">
+      <span
+        class="border"
+        v-for="(item, key) of radio.items"
+        :key="'radio-' + key"
+        :class="{active: curItem === key}"
+        :style="{fontSize: item.length > 7 ? '.16rem' : '.22rem'}"
+        @click="radioSelect(key)"
+      >{{item}}</span>
     </div>
-  </div>
+    <div class="filter-time">
+      <h2>
+        <span>开始日期</span>
+        <span>结束日期</span>
+      </h2>
+      <div class="time-wrapper">
+        <mt-picker ref="startPicker" :visibleItemCount="3" :slots="slotsStart" @change="startChange"></mt-picker>
+        <mt-picker ref="endPicker" :visibleItemCount="3" :slots="slotsEnd" @change="endChange"></mt-picker>
+      </div>
+    </div>
+  </section>
 </template>
 <script>
 export default {
   name: 'Date',
   props: {
-    ostartyear: Number,
-    ostartmonth: Number,
-    oendyear: Number,
-    oendmonth: Number,
-    changed: Boolean
+    radio: Object
   },
   data () {
     return {
+      type: 'time', // 用于上级重置时filter其为curItem: -1
+      curItem: -1, // 默认不选中
+      cstartyear: null,
+      cstartmonth: null,
+      cendyear: null,
+      cendmonth: null,
       startPicker: '',
       endPicker: ''
     }
@@ -35,22 +50,49 @@ export default {
     }
   },
   methods: {
+    radioSelect (key) {
+      let minus = 0
+      if (key === 1) {
+        minus = 3 // 近3个月
+      }
+      if (key === 2) {
+        minus = 6 // 近6个月
+      }
+      let today = new Date()
+      this.cendmonth = today.getMonth() + 1
+      this.cendyear = today.getFullYear()
+      if (this.cendmonth - minus > 1) {
+        this.cstartmonth = this.cendmonth - minus
+        this.cstartyear = this.cendyear
+      } else {
+        this.cstartmonth = 12 - Math.abs(this.cendmonth - minus)
+        this.cstartyear = this.cendyear - 1
+      }
+      this.startPicker.setValues([this.cstartyear, this.cstartmonth])
+      this.endPicker.setValues([this.cendyear, this.cendmonth])
+      let item = this.cstartyear + '/' + this.cstartmonth + '-' + this.cendyear + '/' + this.cendmonth
+      this.$emit('getType', {item, type: 'time'})
+      setTimeout(() => { // 解决初始化点击本月的时候不生效
+        // this.$refs.timeItem[key].setAttribute('class', 'border active')
+        this.curItem = key
+      }, 50)
+    },
     _initSlot (type) {
       let month = new Date().getMonth()
       let monthArr = []
       let monthIdx = null
-      if ((this.ostartyear === 2017 && type === 'start') || (this.oendyear === 2017 && type === 'end')) {
+      if ((this.radio.startyear === 2017 && type === 'start') || (this.radio.endyear === 2017 && type === 'end')) {
         monthArr = [12]
         monthIdx = 0
       } else {
         for (let m = 0; m <= month; m++) {
           monthArr.push(m + 1)
         }
-        monthIdx = this['o' + type + 'month'] - 1
+        monthIdx = this.radio[type + 'month'] - 1
       }
       let year = new Date().getFullYear()
       let yearArr = []
-      let yearIdx = this['o' + type + 'year'] - 2017
+      let yearIdx = this.radio[type + 'year'] - 2017
       for (let y = 2017; y <= year; y++) {
         yearArr.push(y)
       }
@@ -78,8 +120,6 @@ export default {
       this.pickerChange(picker, values[0])
     },
     pickerChange (picker, val) {
-      // this.startPicker.setValues([this.startyear, this.startmonth])
-      // this.endPicker.setValues([this.endyear, this.endmonth])
       // 当年份改变时, 月份随着联动
       let monthArr = []
       if (val === 2017) {
@@ -94,49 +134,90 @@ export default {
         monthArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
         picker.setSlotValues(1, monthArr)
       }
+      // 当日期picker选择日期时, tab就默认不选中
+      this.curItem = -1
+      // 日期picker值改变时, 同时改变显示值
       if (this.startPicker && this.endPicker) {
         let start = this.startPicker.getValues()
         let end = this.endPicker.getValues()
-        this.$emit('dateRange', {
-          startyear: start[0],
-          startmonth: start[1],
-          endyear: end[0],
-          endmonth: end[1],
-          changed: true
-        })
+        this.cstartyear = start[0]
+        this.cstartmonth = start[1]
+        this.cendyear = end[0]
+        this.cendmonth = end[1]
+        let item = this.cstartyear + '/' + this.cstartmonth + '-' + this.cendyear + '/' + this.cendmonth
+        this.$emit('getType', {item, type: 'time'})
       }
     }
   },
-  updated () {
-    // console.log(this.timerange)
+  mounted () {
+    this.cstartyear = this.radio.startyear
+    this.cstartmonth = this.radio.startmonth
+    this.cendyear = this.radio.endyear
+    this.cendmonth = this.radio.endmonth
   }
 }
 </script>
 <style lang="stylus" scoped>
-.filter-time >>>
-  .picker
-    flex 1
-  .picker:first-child
-    padding-right .22rem
-  .picker:last-child
-    padding-left .22rem
-  .picker-item
-    padding 0 .05rem
-    color #0c6f92
-  .picker-item.picker-selected
-    color $borderColor
-  .picker-center-highlight:before,
-  .picker-center-highlight:after
-    background-color $borderBottomColor
-.filter-time
-  h2
-    margin .4rem 0 .14rem
-    display flex
+.filter-opts-item
+  padding .3rem 0
+  &::before
+    border-color #3043a9
+  h3
+    padding 0 .2rem
+    position relative
+    color $commonTxtColor
+    font-size .26rem
+    line-height .3rem
     span
-      flex 1
-      color #009ec5
-      font-size .26rem
+      margin-left .2rem
+      color $txtColor
+      letter-spacing .02rem
+  .filter-item
+    padding 0 .1rem
+    display grid
+    grid-template-columns: repeat(3, 1fr)
+    span
+      display flex
+      padding .05rem
+      margin .2rem .1rem 0
+      box-sizing border-box
+      align-items center
+      justify-content center
       text-align center
-  .time-wrapper
-    display flex
+      height .7rem
+      color $txtColor
+      font-size .24rem
+      &::before
+        border-color $borderColor
+        border-radius 5px
+      &.active
+        background-color $borderColor
+        color $commonTxtColor
+        border-radius 5px
+  .filter-time
+    h2
+      margin .4rem 0 .14rem
+      display flex
+      span
+        flex 1
+        color #009ec5
+        font-size .26rem
+        text-align center
+    .time-wrapper
+      display flex
+    >>>
+      .picker
+        flex 1
+      .picker:first-child
+        padding-right .22rem
+      .picker:last-child
+        padding-left .22rem
+      .picker-item
+        padding 0 .05rem
+        color #0c6f92
+      .picker-item.picker-selected
+        color $borderColor
+      .picker-center-highlight:before,
+      .picker-center-highlight:after
+        background-color $borderBottomColor
 </style>

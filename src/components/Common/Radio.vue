@@ -39,9 +39,6 @@ export default {
         let minage = ''
         let maxage = ''
         this.$emit('getType', {item, type, minage, maxage})
-        setTimeout(() => { // 解决初始化点击本月的时候不生效
-          this.$refs.age[key].setAttribute('class', 'border active')
-        }, 50)
       } else if (type === 'time') { // 传给上级当前选中的值, 更新搜索条件
         let changed = false
         let minus = 0

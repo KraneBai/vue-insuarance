@@ -23,8 +23,6 @@ export default {
   },
   methods: {
     setData () {
-      // let id = this.$route.params.id
-      // axios.get('/api/details.json/id/' + id)
       this.$indicator.open()
       axios.get('/api/details.json')
         .then((res) => {

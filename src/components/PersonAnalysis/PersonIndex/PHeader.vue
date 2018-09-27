@@ -13,7 +13,7 @@
     </header>
     <nav class="border">
       <dl>
-        <dt>{{overviews.startyear}}/{{overviews.startmonth}} - {{overviews.endyear}}/{{overviews.endmonth}} | {{overviews.industry}}</dt>
+        <dt>{{overviews.date}} | {{overviews.industry}}</dt>
         <dd>{{overviews.province}}->{{overviews.city}}</dd>
       </dl>
       <i @click="filterShow">筛选</i>

@@ -11,7 +11,7 @@
           class="swiper-slide"
           :type="item"
           :key="index"
-          v-for="(item, index) of overviews.charts"
+          v-for="(item, index) of charts"
         ></p-chart>
       </div>
       <div class="swiper-pagination"></div>
@@ -20,7 +20,7 @@
       <p-center :overviews="overviews"></p-center>
     </Drawer>
     <Drawer :closable="false" v-model="filterShow">
-      <p-filter :overviews="overviews" :showDate="filterShow"></p-filter>
+      <p-filter :filters="filters" :showDate="filterShow"></p-filter>
     </Drawer>
   </div>
 </template>
@@ -42,6 +42,8 @@ export default {
   data () {
     return {
       overviews: {},
+      filters: {}, // 筛选
+      charts: {}, // 中心图表部分
       centerShow: false,
       filterShow: false
     }
@@ -60,9 +62,37 @@ export default {
       axios.get('/api/overviews.json')
         .then((res) => {
           this.$indicator.close()
+          this.initChart()
           let data = res.data
           if (data.status) {
             this.overviews = data.overviews
+          }
+        })
+        .catch(() => {
+          this.$indicator.close()
+        })
+    },
+    initFilter () {
+      axios.get('/api/filters.json')
+        .then((res) => {
+          let data = res.data
+          if (data.status) {
+            this.filters = data.filters
+          }
+        })
+        .catch(() => {
+          this.$indicator.close()
+        })
+    },
+    initChart () {
+      this.$indicator.open()
+      axios.get('/api/charts.json')
+        .then((res) => {
+          this.$indicator.close()
+          this.initFilter()
+          let data = res.data
+          if (data.status) {
+            this.charts = data.charts
           }
         })
         .catch(() => {
