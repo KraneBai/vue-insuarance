@@ -18,13 +18,13 @@ export default {
   bg-img(100%, 100%, left, top)
   background-image url(../../assets/images/loginbg.png)
   h1
-    padding-top 2.4rem
+    padding-top 2.2rem
     text-align center
     font-size .44rem
     font-weight normal
 .login >>>
   form
-    padding 1.7rem .9rem 0
+    padding 1rem .9rem 0
     box-sizing border-box
   .inp-wrapper
     padding .58rem 0 .2rem .56rem
