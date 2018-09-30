@@ -2,12 +2,12 @@
   <div class="filter-content">
     <div class="filter-inner" v-if="showDate">
       <date
-        :radio="filters.timeRadio"
+        :radio="times"
         @getType="getFilterInfo"
         ref="timezone"
       ></date>
-      <radio @getType="getFilterInfo" :radio="filters.companyRadio" ref="companyzone"></radio>
-      <radio @getType="getFilterInfo" :radio="filters.areaRadio" ref="areazone"></radio>
+      <radio @getType="getFilterInfo" :radio="companies" ref="companyzone"></radio>
+      <radio @getType="getFilterInfo" :radio="areas" ref="areazone"></radio>
     </div>
     <div class="btns">
       <button class="reset-btn" @click="reset">重置</button>
@@ -18,6 +18,8 @@
 <script>
 import Radio from '../../Common/Radio'
 import Date from '../../Common/Date'
+import axios from 'axios'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'PFilter',
   components: {
@@ -25,31 +27,96 @@ export default {
     Date
   },
   props: {
-    filters: Object,
     showDate: Boolean
   },
   data () {
     return {
+      careaname: '', // 标识搜索后的地区
       searchItem: { // 默认搜索值
-        time: '',
-        company: '行业',
-        area: '全省'
+        startyear: null,
+        startmonth: null,
+        endyear: null,
+        endmonth: null,
+        companytype: 0, // 行业默认
+        area: -1 // 全省默认
+      },
+      areas: {},
+      companies: {
+        type: 'companytype',
+        title: '公司类型',
+        items: [
+          {
+            id: 0,
+            name: '行业'
+          },
+          {
+            id: 1,
+            name: '寿险类型'
+          },
+          {
+            id: 2,
+            name: '财险类型'
+          },
+          {
+            id: 3,
+            name: '中介类型'
+          }
+        ]
+      },
+      times: {
+        type: 'time',
+        title: '时间区间',
+        items: [
+          {
+            id: 0,
+            name: '本月'
+          },
+          {
+            id: 1,
+            name: '近三个月'
+          },
+          {
+            id: 2,
+            name: '近六个月'
+          }
+        ],
+        startyear: null,
+        startmonth: null,
+        endyear: null,
+        endmonth: null
       }
     }
   },
+  computed: {
+    ...mapState(['area', 'areaname', 'startmonth', 'startyear', 'endmonth', 'endyear'])
+  },
   methods: {
+    ...mapMutations(['changeArgs']),
     // 点击空白隐藏左边栏
     filterHide () {
       this.$emit('filterControl', false)
     },
     // 子组件传给父组件, 改变搜索条件值
     getFilterInfo (info) {
-      this.searchItem[info.type] = info.item
+      if (info.type === 'time') {
+        // 更新开始结束时间
+        let {startyear, startmonth, endyear, endmonth} = info
+        this.searchItem = Object.assign({}, this.searchItem, {startyear, startmonth, endyear, endmonth})
+      } else if (info.type === 'area') {
+        this.searchItem[info.type] = info.id
+        this.careaname = info.name // 点击存储当前地区名, 搜索时用
+      } else {
+        this.searchItem[info.type] = info.id
+      }
     },
     // 搜索
     search () {
+      // 点击搜索的时候改变vuex中的值
+      let {area, companytype, startyear, startmonth, endyear, endmonth} = this.searchItem
+      this.changeArgs({areaname: this.careaname, area, d_company_type: companytype, startyear, startmonth, endyear, endmonth})
       console.log(this.searchItem)
-      this.$router.push({name: 'DCharWrap'})
+      // this.$router.go(0) // safari中不好使
+      window.location.reload()
     },
     // 重置筛选
     reset () {
@@ -58,22 +125,49 @@ export default {
         if (data.type === 'time') {
           // 重置picker
           data.curItem = -1
-          data.cstartyear = 2017
-          data.cstartmonth = 12
-          data.cendyear = 2018
-          data.cendmonth = 6
-          data.startPicker.setValues([2017, 12])
-          data.endPicker.setValues([2018, 6])
+          data.cstartyear = this.startyear
+          data.cstartmonth = this.startmonth
+          data.cendyear = this.endyear
+          data.cendmonth = this.endmonth
+          data.startPicker.setValues([this.startyear, this.startmonth])
+          data.endPicker.setValues([this.endyear, this.endmonth])
         } else {
           data.curItem = 0
         }
       }
+      this.careaname = this.areaname
       this.searchItem = { // 重置搜索值
-        time: '',
-        company: '行业',
-        area: '全省'
+        startyear: this.startyear,
+        startmonth: this.startmonth,
+        endyear: this.endyear,
+        endmonth: this.endmonth,
+        companytype: 0, // 行业默认
+        area: -1 // 全省默认
       }
+    },
+    _initFilter () {
+      axios.get('/jmobile/index/area/uid/' + sessionStorage.getItem('uid'))
+      // axios.get('/api/filters.json')
+        .then((res) => {
+          if (res.status) {
+            this.areas = res.data.data
+          } else {
+            this.$toast({
+              message: res.data.info,
+              duration: 5000
+            })
+          }
+        })
+        .catch(() => {
+          this.$indicator.close()
+        })
     }
+  },
+  mounted () {
+    this._initFilter()
+    // 动态给日期组件和默认参数传递日期
+    this.times = Object.assign({}, this.times, {startyear: this.startyear, startmonth: this.startmonth, endyear: this.endyear, endmonth: this.endmonth})
+    this.searchItem = Object.assign({}, this.searchItem, this.startmonth, {startyear: this.startyear, startmonth: this.startmonth, endyear: this.endyear, endmonth: this.endmonth})
   }
 }
 </script>

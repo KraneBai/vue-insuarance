@@ -3,7 +3,7 @@
     <p-header
       @centerControl="CenterControl"
       @filterControl="FilterControl"
-      :overviews="overviews"
+      :user="user"
     ></p-header>
     <div class="charts" ref="swiper">
       <div class="swiper-wrapper">
@@ -17,10 +17,10 @@
       <div class="swiper-pagination"></div>
     </div>
     <Drawer :closable="false" v-model="centerShow" placement="left">
-      <p-center :overviews="overviews"></p-center>
+      <p-center :user="user"></p-center>
     </Drawer>
     <Drawer :closable="false" v-model="filterShow">
-      <p-filter :filters="filters" :showDate="filterShow"></p-filter>
+      <p-filter :showDate="filterShow"></p-filter>
     </Drawer>
   </div>
 </template>
@@ -31,6 +31,7 @@ import PFilter from './PFilter'
 import PChart from './PChart'
 import axios from 'axios'
 import Swiper from 'swiper'
+import { mapState, mapMutations } from 'vuex'
 export default {
   name: 'PersonOverview',
   components: {
@@ -41,14 +42,17 @@ export default {
   },
   data () {
     return {
-      overviews: {},
-      filters: {}, // 筛选
+      user: {},
       charts: {}, // 中心图表部分
       centerShow: false,
       filterShow: false
     }
   },
+  computed: {
+    ...mapState(['area', 'areaname', 'companytype', 'startmonth', 'startyear', 'endyear', 'endmonth'])
+  },
   methods: {
+    ...mapMutations(['changeArgs']),
     // 父级显示人物中心栏
     CenterControl (type) {
       this.centerShow = type
@@ -58,41 +62,50 @@ export default {
       this.filterShow = type
     },
     setData () {
-      this.$indicator.open()
-      axios.get('/api/overviews.json')
+      // 获取center及header信息
+      axios.get('/jmobile/User/index/uid/' + sessionStorage.getItem('uid'))
+      // axios.get('/api/overviews.json')
         .then((res) => {
-          this.$indicator.close()
-          this.initChart()
-          let data = res.data
-          if (data.status) {
-            this.overviews = data.overviews
+          if (res.data.status === 1) {
+            this.user = res.data.data
+            if (this.areaname === '') {
+              this.changeArgs({areaname: res.data.data.city})
+            }
+            this._initChart()
+          } else {
+            this.$toast({
+              message: res.data.info,
+              duration: 5000
+            })
           }
         })
         .catch(() => {
           this.$indicator.close()
+          this.$toast({
+            message: '网络错误',
+            duration: 5000
+          })
         })
     },
-    initFilter () {
-      axios.get('/api/filters.json')
-        .then((res) => {
-          let data = res.data
-          if (data.status) {
-            this.filters = data.filters
-          }
-        })
-        .catch(() => {
-          this.$indicator.close()
-        })
-    },
-    initChart () {
+    _initChart () {
       this.$indicator.open()
-      axios.get('/api/charts.json')
+      // 拼接日期参数
+      let datestart = this.startyear + '-' + this.startmonth
+      let dateend = this.endyear + '-' + this.endmonth
+      let args = this.common.checkArgs({area: this.area, d_company_type: this.companytype, datestart, dateend})
+      console.log(args)
+      axios.get('/jmobile/index/index' + args)
+      // axios.get('/api/charts.json')
         .then((res) => {
           this.$indicator.close()
-          this.initFilter()
-          let data = res.data
-          if (data.status) {
-            this.charts = data.charts
+          console.log(res)
+          if (res.data.status === 1) {
+            this.charts = res.data.data
+          } else {
+            this.$toast({
+              message: res.data.info,
+              duration: 5000
+            })
           }
         })
         .catch(() => {

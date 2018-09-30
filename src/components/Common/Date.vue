@@ -1,15 +1,15 @@
 <template>
   <section class="filter-opts-item border-bottom">
-    <h3>{{radio.tit}}<span>{{cstartyear}}/{{cstartmonth}}-{{cendyear}}/{{cendmonth}}</span></h3>
+    <h3>{{radio.title}}<span>{{cstartyear}}/{{cstartmonth}}-{{cendyear}}/{{cendmonth}}</span></h3>
     <div class="filter-item">
       <span
         class="border"
         v-for="(item, key) of radio.items"
-        :key="'radio-' + key"
+        :key="item.id"
         :class="{active: curItem === key}"
-        :style="{fontSize: item.length > 7 ? '.16rem' : '.22rem'}"
+        :style="{fontSize: item.name.length > 7 ? '.16rem' : '.22rem'}"
         @click="radioSelect(key)"
-      >{{item}}</span>
+      >{{item.name}}</span>
     </div>
     <div class="filter-time">
       <h2>
@@ -70,8 +70,7 @@ export default {
       }
       this.startPicker.setValues([this.cstartyear, this.cstartmonth])
       this.endPicker.setValues([this.cendyear, this.cendmonth])
-      let item = this.cstartyear + '/' + this.cstartmonth + '-' + this.cendyear + '/' + this.cendmonth
-      this.$emit('getType', {item, type: 'time'})
+      this.$emit('getType', {startyear: this.cstartyear, startmonth: this.cstartmonth, endyear: this.cendyear, endmonth: this.cendmonth, type: 'time'})
       setTimeout(() => { // 解决初始化点击本月的时候不生效
         // this.$refs.timeItem[key].setAttribute('class', 'border active')
         this.curItem = key
@@ -144,8 +143,7 @@ export default {
         this.cstartmonth = start[1]
         this.cendyear = end[0]
         this.cendmonth = end[1]
-        let item = this.cstartyear + '/' + this.cstartmonth + '-' + this.cendyear + '/' + this.cendmonth
-        this.$emit('getType', {item, type: 'time'})
+        this.$emit('getType', {startyear: this.cstartyear, startmonth: this.cstartmonth, endyear: this.cendyear, endmonth: this.cendmonth, type: 'time'})
       }
     }
   },

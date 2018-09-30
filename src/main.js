@@ -8,6 +8,8 @@ import MintUI from 'mint-ui'
 import VueHighcharts from 'vue-highcharts'
 import { Drawer } from 'iview'
 
+import common from './util/common.js' // 添加公用方法
+
 import 'mint-ui/lib/style.css'
 import 'swiper/dist/css/swiper.css'
 import 'iview/dist/styles/iview.css'
@@ -18,6 +20,7 @@ Vue.use(VueHighcharts)
 Vue.use(MintUI)
 Vue.component('Drawer', Drawer)
 Vue.config.productionTip = false
+Vue.prototype.common = common
 
 /* eslint-disable no-new */
 new Vue({

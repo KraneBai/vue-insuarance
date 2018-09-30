@@ -9,14 +9,15 @@
 <script>
 export default {
   name: 'Platform',
-  data () {
-    return {}
-  },
   methods: {
     // 人员概览
     personDetail () {
       this.$router.push({name: 'PersonIndex'})
     }
+  },
+  mounted () {
+    // 当人员概览等页面返回到选择平台页面时, 清空上一页正在loading的效果
+    this.$indicator.close()
   }
 }
 </script>

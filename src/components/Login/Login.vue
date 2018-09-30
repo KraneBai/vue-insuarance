@@ -31,6 +31,9 @@ export default {
     position relative
     line-height .4rem
     bg-img(.38rem, .38rem, left, .58rem)
+    span
+      display inline-block
+      height .4rem
     &::before
       border-color #fff
     input
@@ -54,6 +57,7 @@ export default {
         right 0
         top .62rem
         color $commonTxtColor
+        font-size 0.2rem
   .log-btns
     padding-top .9rem
     position relative

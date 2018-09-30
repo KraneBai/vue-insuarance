@@ -1,7 +1,7 @@
 <template>
   <section class="filter-opts-item border-bottom">
     <h3>
-      {{radio.tit}}
+      {{radio.title}}
       <slot name="subtit"></slot>
       <slot name="arrow"></slot>
     </h3>
@@ -10,12 +10,12 @@
       <span
         class="border"
         v-for="(item, key) of radio.items"
-        :key="'radio-' + key"
+        :key="item.id"
         :class="{active: curItem === key}"
-        :style="{fontSize: item.length > 7 ? '.16rem' : '.22rem'}"
-        @click="radioSelect(item, key, radio.type)"
+        :style="{fontSize: item.name.length > 7 ? '.16rem' : '.22rem'}"
+        @click="radioSelect(item.id, key, radio.type, item.name)"
         :ref="radio.type"
-      >{{item}}</span>
+      >{{item.name}}</span>
     </div>
     <slot name="picker"></slot>
   </section>
@@ -33,39 +33,15 @@ export default {
   },
   methods: {
     // 改变当前选中的tab
-    radioSelect (item, key, type) {
+    radioSelect (id, key, type, name) {
       this.curItem = key
       if (type === 'age') { // 输入的年龄为空, 置空操作在前
         let minage = ''
         let maxage = ''
-        this.$emit('getType', {item, type, minage, maxage})
-      } else if (type === 'time') { // 传给上级当前选中的值, 更新搜索条件
-        let changed = false
-        let minus = 0
-        if (key === 1) {
-          minus = 3 // 近3个月
-        }
-        if (key === 2) {
-          minus = 6 // 近6个月
-        }
-        let today = new Date()
-        let endmonth = today.getMonth() + 1
-        let endyear = today.getFullYear()
-        let startyear = null
-        let startmonth = null
-        if (endmonth - minus > 1) {
-          startmonth = endmonth - minus
-          startyear = endyear
-        } else {
-          startmonth = 12 - Math.abs(endmonth - minus)
-          startyear = endyear - 1
-        }
-        this.$emit('getType', {item, type, changed, startmonth, startyear, endmonth, endyear})
-        setTimeout(() => { // 解决初始化点击本月的时候不生效
-          this.$refs.time[key].setAttribute('class', 'border active')
-        }, 50)
+        let info = this.radio.items[key]
+        this.$emit('getType', {type, minage, maxage, min: info.min, max: info.max})
       } else {
-        this.$emit('getType', {item, type})
+        this.$emit('getType', {id, type, name})
       }
     }
   }

@@ -5,26 +5,30 @@
         <img src="../../../assets/images/avatar.png" @click="centerShow">
       </span>
       <dl>
-        <dt>{{overviews.name}}</dt>
-        <dd>{{overviews.company}}</dd>
+        <dt>{{user.nickname}}</dt>
+        <dd>{{user.company}}</dd>
       </dl>
-      <i class="alert" @click="messageList"></i>
+      <i class="alert" @click="messageList" v-if="user.read_at === 0"></i>
       <i class="messages" @click="messageList"></i>
     </header>
     <nav class="border">
       <dl>
-        <dt>{{overviews.date}} | {{overviews.industry}}</dt>
-        <dd>{{overviews.province}}->{{overviews.city}}</dd>
+        <dt>{{startyear}}-{{startmonth}}至{{endyear}}-{{endmonth}} | {{user.division_work}}</dt>
+        <dd>{{areaname}}</dd>
       </dl>
       <i @click="filterShow">筛选</i>
     </nav>
   </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
   name: 'PHeader',
   props: {
-    overviews: Object
+    user: Object
+  },
+  computed: {
+    ...mapState(['startmonth', 'startyear', 'endmonth', 'endyear', 'areaname'])
   },
   methods: {
     // 消息列表

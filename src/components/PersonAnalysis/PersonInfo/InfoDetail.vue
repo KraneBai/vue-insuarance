@@ -1,14 +1,14 @@
 <template>
   <div class="details">
     <h1>{{details.title}}</h1>
-    <h5>{{details.date}}</h5>
+    <h5>{{details.created_at}}</h5>
     <div class="content" v-html="details.content"></div>
     <div class="attach">
       <h3>附件</h3>
-      <dl v-for="item of details.attach" :key="item.id">
-        <dt>{{item.title}}</dt>
-        <dd>查看></dd>
-      </dl>
+      <a :href="item.file_url" v-for="(item, index) of details.url_file" :key="index">
+        <span>{{item.name}}</span>
+        <span>查看></span>
+      </a>
     </div>
   </div>
 </template>
@@ -23,13 +23,14 @@ export default {
   },
   methods: {
     setData () {
+      let id = this.$route.params.id
       this.$indicator.open()
-      axios.get('/api/details.json')
+      // axios.get('/api/details.json')
+      axios.get('/jmobile/Notice/details/uid/' + sessionStorage.getItem('uid') + '/id/' + id)
         .then((res) => {
           this.$indicator.close()
-          let data = res.data
-          if (data.status) {
-            this.details = data.details
+          if (res.data.status) {
+            this.details = res.data.data
           }
         })
         .catch(() => {
@@ -71,13 +72,15 @@ export default {
     padding .2rem 0
     font-size .28rem
     color $commonTxtColor
-    dl
+    a
       display flex
       margin-top .3rem
-      dt
-        flex 1
-      dd
-        text-align right
-        width 1rem
-        color $txtColor
+      span
+        &:first-child
+          flex 1
+          color #fff
+        &:last-child
+          text-align right
+          width 1rem
+          color $txtColor
 </style>

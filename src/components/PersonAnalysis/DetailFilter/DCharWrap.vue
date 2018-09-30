@@ -16,6 +16,7 @@
 <script>
 import Swiper from 'swiper'
 import DChart from './DChart'
+import { mapState } from 'vuex'
 import axios from 'axios'
 export default {
   name: 'DCharWrap',
@@ -26,6 +27,9 @@ export default {
     return {
       allCharts: []
     }
+  },
+  computed: {
+    ...mapState(['area', 'companytype', 'startmonth', 'startyear', 'endyear', 'endmonth'])
   },
   methods: {
     _swiper () {
@@ -42,17 +46,34 @@ export default {
       })
     },
     setData () {
+      console.log(this.$route.query)
       this.$indicator.open()
-      axios.get('/api/filteredCharts.json')
+      let datestart = this.startyear + '-' + this.startmonth
+      let dateend = this.endyear + '-' + this.endmonth
+      let {sex, education, political, min, max, sign} = this.$route.query
+      let args = this.common.checkArgs({sign, area: this.area, d_company_type: this.companytype, datestart, dateend, sex, education, political, min, max})
+      console.log(args)
+      axios.get('/jmobile/index/details' + args)
         .then((res) => {
           this.$indicator.close()
-          let data = res.data
-          if (data.status) {
-            this.allCharts = data.charts
+          console.log(res)
+          if (res) {
+            this.allCharts = res.data.data
+            // this.radio = data.data.radio
+            // this.multi = data.data.multi
+          } else {
+            this.$toast({
+              message: res.data.info,
+              duration: 5000
+            })
           }
         })
         .catch(() => {
           this.$indicator.close()
+          this.$toast({
+            message: '网络错误',
+            duration: 5000
+          })
         })
     }
   },

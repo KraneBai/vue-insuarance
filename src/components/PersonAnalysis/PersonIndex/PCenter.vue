@@ -1,20 +1,31 @@
 <template>
   <div>
     <header class="border-bottom">
-      <span>
-        <img src="../../../assets/images/avatar.png">
-      </span>
-      {{overviews.name}}
+      <span><img src="../../../assets/images/avatar.png"></span>
+      {{user.nickname}}
     </header>
     <section class="info">
-      <dl v-for="item of overviews.center" :key="item.type">
-        <dt>{{item.category}}</dt>
+      <dl>
+        <dt>所属公司</dt>
+        <dd>{{user.company}}</dd>
+      </dl>
+      <dl>
+        <dt>手机号</dt>
+        <dd>{{user.tel}}</dd>
+      </dl>
+      <dl>
+        <dt>职务</dt>
+        <dd>{{user.job}}</dd>
+      </dl>
+      <dl>
+        <dt>分管工作</dt>
+        <dd>{{user.division_work}}</dd>
+      </dl>
+      <dl>
+        <dt>绑定微信</dt>
         <dd>
-          {{item.info}}
-          <button
-            v-if="item.type === 'wechat'"
-            @click.stop="unlock"
-          >解除绑定</button>
+          {{user.division_works}}
+          <button @click.stop="unlock">解除绑定</button>
         </dd>
       </dl>
     </section>
@@ -24,7 +35,7 @@
 export default {
   name: 'PCenter',
   props: {
-    overviews: Object
+    user: Object
   },
   methods: {
     // 点击空白隐藏左边栏
@@ -32,7 +43,9 @@ export default {
       this.$emit('centerControl', false)
     },
     // 解除绑定
-    unlock () {}
+    unlock () {
+      this.$router.push({name: 'Login'})
+    }
   }
 }
 </script>

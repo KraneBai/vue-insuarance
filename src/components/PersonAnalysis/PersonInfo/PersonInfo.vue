@@ -45,7 +45,7 @@ export default {
       messages: [], // 存放通知公告
       reports: [], // 存放分析报告数据
       lists: [], // 实际传给列表页面的数组
-      pages: 1
+      page: 1
     }
   },
   computed: {
@@ -64,7 +64,7 @@ export default {
       if (this.tab === type) {
         return false
       } else {
-        this.pages = 1
+        this.page = 1
         this.tab = type
         this.isActive = type === 'messages'
         // 判断当前切换的tab中是否之前加载过数据, 决定是否初始化数据
@@ -83,31 +83,32 @@ export default {
     // 上拉loadmore 下拉reload 初始化init -> 数据
     setData (tab, type) {
       this.$indicator.open()
-      let url = 'messages.json'
+      // let url = 'messages.json'
+      let url = 'Notice/index'
       if (tab === 'reports') {
-        url = 'reports.json'
+        // url = 'reports.json'
       }
-      axios.get('/api/' + url)
+      // axios.get('/api/' + url)
+      axios.get('/jmobile/' + url + '/uid/' + sessionStorage.getItem('uid') + '/page/' + this.page)
         .then((res) => {
           this.$indicator.close()
-          let data = res.data
-          if (data.status) {
+          if (res.data.status) {
             if (type === 'loadmore') {
               if (tab === 'messages') {
-                this.messages.push(...data.data.lists)
+                this.messages.push(...res.data.data)
                 this.lists = this.messages
               } else {
-                this.reports.push(...data.data.lists)
+                this.reports.push(...res.data.data)
                 this.lists = this.reports
               }
               this.$refs.loadmore.onBottomLoaded()
               this.allLoaded = true // 若数据已全部获取完毕
             } else {
               if (tab === 'messages') {
-                this.messages = data.data.lists
+                this.messages = res.data.data
                 this.lists = this.messages
               } else {
-                this.reports = data.data.lists
+                this.reports = res.data.data
                 this.lists = this.reports
               }
               if (type === 'reload') {
@@ -127,8 +128,6 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-.lists >>> .mint-loadmore-text
-  color $txtColor
 .lists
   position relative
   width 100%
@@ -171,4 +170,9 @@ export default {
     padding-top .5rem
     text-align center
     color $commonTxtColor
+  >>>
+    .mint-loadmore
+      height 100%
+    .mint-loadmore-text
+      color $txtColor
 </style>

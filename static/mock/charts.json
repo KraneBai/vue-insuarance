@@ -39,28 +39,49 @@
           "data": [500, 100, 300, 250, 700, 200, 600, 1000, 500, 600, 700, 1000, 200, 300, 400, 500, 600, 700, 1000, 500, 600, 700, 1000]
         }]
       },
-      "footerList": [
+      "footerList": [[
         {
           "id": 1,
-          "newTit": "新增人数",
+          "newTit": "新增人数1",
           "newMount": 1158,
           "industryTit": "行业占比",
           "industryMount": "13.51%"
         },
         {
           "id": 2,
-          "newTit": "新增人数",
+          "newTit": "新增人数2",
+          "newMount": 1158,
+          "industryTit": "行业占比",
+          "industryMount": "13.51%"
+        }],
+        [{
+          "id": 3,
+          "newTit": "新增人数3",
+          "newMount": 1158,
+          "industryTit": "行业占比",
+          "industryMount": "13.51%"
+        },
+        {
+          "id": 1,
+          "newTit": "新增人数1",
+          "newMount": 1158,
+          "industryTit": "行业占比",
+          "industryMount": "13.51%"
+        }],
+        [{
+          "id": 2,
+          "newTit": "新增人数2",
           "newMount": 1158,
           "industryTit": "行业占比",
           "industryMount": "13.51%"
         },
         {
           "id": 3,
-          "newTit": "新增人数",
+          "newTit": "新增人数3",
           "newMount": 1158,
           "industryTit": "行业占比",
           "industryMount": "13.51%"
-        }
+        }]
       ]
     },
     "add": {
@@ -141,7 +162,7 @@
         }]
       },
       "footerList": [
-        {
+        [{
           "id": 1,
           "newTit": "新增人数",
           "newMount": 1158,
@@ -154,7 +175,7 @@
           "newMount": 1158,
           "industryTit": "行业占比",
           "industryMount": "13.51%"
-        }
+        }]
       ]
     }
   }

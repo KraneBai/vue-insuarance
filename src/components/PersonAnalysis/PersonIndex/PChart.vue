@@ -23,25 +23,27 @@
         </div>
       </div>
     </div>
-    <footer class="border" ref="wrapper" v-if="hasFooter">
-      <div ref="tabContent">
-        <section ref="tabItem" v-for="item in type.footerList" :key="item.id">
-          <dl>
-            <dt>{{item.newTit}}</dt>
-            <dd>{{item.newMount}}</dd>
-          </dl>
-          <dl class="orange">
-            <dt>{{item.industryTit}}</dt>
-            <dd>{{item.industryMount}}</dd>
-          </dl>
-          <div class="line border-right" v-if="type.footerList.length !== item.id"></div>
-        </section>
+    <footer class="border" :ref="type.type === 'all' ? 'swiper' : ''" v-if="type.type !== 'add'">
+      <div :class="{'swiper-wrapper': (type.type === 'all')}">
+        <div :class="{'swiper-slide': (type.type === 'all'), 'width100': (type.type === 'leave')}" v-for="(items, sindex) of type.footerList" :key="'swipe' + sindex">
+          <section ref="tabItem" v-for="(item, index) of items" :key="index">
+            <dl>
+              <dt>{{item.newTit}}</dt>
+              <dd>{{item.newMount}}</dd>
+            </dl>
+            <dl class="orange">
+              <dt>{{item.industryTit}}</dt>
+              <dd>{{item.industryMount}}</dd>
+            </dl>
+            <!-- <div class="line border-right" v-if="index === 0"></div> -->
+          </section>
+        </div>
       </div>
     </footer>
   </div>
 </template>
 <script>
-import BScroll from 'better-scroll'
+import Swiper from 'swiper'
 export default {
   name: 'PChart',
   props: {
@@ -198,36 +200,30 @@ export default {
     toFilterChartDetail (type) {
       this.$router.push({name: 'DetailFilter', query: {type}})
     },
-    _initScroll () {
-      this.$nextTick(() => {
-        if (this.$refs.tabItem) {
-          let len = this.$refs.tabItem.length
-          // 计算横向滚动区域内的宽度 否则无法横向滚动
-          let width = this.$refs.tabItem[0].getBoundingClientRect().width * len
-          this.$refs.tabContent.style.width = width + 'px'
-          if (!this.scrollX) {
-            this.scrollX = new BScroll(this.$refs.wrapper, {
-              eventPassthrough: 'vertical',
-              startX: 0,
-              scrollX: true,
-              scrollY: false
-            })
-          } else {
-            this.scrollX.refresh()
-          }
-        }
-      })
-    },
     _initChart () {
       // pie图  动态改变obj的值
       this.pieOpt = Object.assign({}, this.commonChart, this.pieOpt, this.type.pieData)
       this.pieOpt.legend = Object.assign({}, this.pieOpt.legend, {layout: 'vertical'}, {x: 5, y: -5}, {symbolWidth: 0})
       // line图
       this.lineOpt = Object.assign({}, this.commonChart, this.lineOpt, this.type.lineData)
+    },
+    // 初始化swiper
+    _swiper () {
+      this.$nextTick(() => {
+        if (this.$refs.swiper) {
+          this.swiper = new Swiper(this.$refs.swiper, {
+            loop: true,
+            autoplay: true,
+            direction: 'horizontal',
+            observer: true // 启动动态检查器(OB/观众/观看者)，当改变swiper的样式（例如隐藏/显示）或者修改swiper的子元素时，自动初始化swiper
+          })
+        }
+      })
     }
   },
   mounted () {
-    this._initScroll()
+    // this._initScroll()
+    this._swiper()
     this._initChart()
     // 新增人员时没有底部 动态调整位置
     if (this.type.type === 'add') {
@@ -245,6 +241,22 @@ export default {
       position absolute
       top 0
       left 0
+  .swiper-slide
+    &:nth-child(2n+1)
+      section
+        position relative
+        &:nth-child(2n+1)::after
+          display none
+        dl
+          &:first-child::after
+            content ''
+            position absolute
+            left 50%
+            top 50%
+            margin-top -.3rem
+            width 1px
+            height .6rem
+            background $txtColor
 .personnel
   position relative
   height 100%
@@ -355,18 +367,23 @@ export default {
       display flex
       flex-wrap nowrap
       section
+        position relative
         flex 1
         min-width 3rem
         height 1.4rem
+        &:first-child::after
+          content ''
+          position absolute
+          right 0
+          width 1px
+          height .6rem
+          background $txtColor
         dl
           flex 1
           dd
             font-size .4rem
-        .line
-          width .1rem
-          height .6rem
-          &::before
-            border-color $txtColor
       .orange
         margin 0
+    .width100
+      width 100%
 </style>

@@ -1,14 +1,14 @@
 <template>
   <ul class="messages">
     <li
-      :class="{unread: !item.readable}"
+      :class="{unread: !item.read_at}"
       class="border-bottom"
       v-for="item of messages"
       :key="item.id"
       @click="details(item.id)"
     >
       <p>{{item.title}}</p>
-      <span>{{item.date}}</span>
+      <span>{{item.created_at}}</span>
     </li>
   </ul>
 </template>

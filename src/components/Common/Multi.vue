@@ -1,7 +1,7 @@
 <template>
   <section class="filter-opts-item border-bottom">
     <h3>
-      {{multi.tit}}
+      {{multi.title}}
       <slot name="arrow"></slot>
     </h3>
     <div class="filter-item">
